@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,6 +18,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.unibo.android.ui.R
+import androidx.compose.ui.res.painterResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -111,9 +111,9 @@ fun LoginScreen(
             shape = RoundedCornerShape(10.dp),
             visualTransformation = if (passwordVisibile) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
-                val immagineIcona = if (passwordVisibile) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
+                val immagineIcona = if (passwordVisibile) R.drawable.ic_visibility else R.drawable.ic_visibility_off
                 IconButton(onClick = { passwordVisibile = !passwordVisibile }) {
-                    Icon(imageVector = immagineIcona, contentDescription = null, tint = coloreCrema.copy(alpha = 0.6f))
+                    Icon(painter = painterResource(id = immagineIcona), contentDescription = null, tint = coloreCrema.copy(alpha = 0.6f))
                 }
             },
             colors = TextFieldDefaults.colors(
