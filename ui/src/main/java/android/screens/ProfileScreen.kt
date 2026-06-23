@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.unibo.android.ui.R
+import androidx.compose.ui.res.vectorResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -111,7 +112,7 @@ fun ProfileScreen() {
                         modifier = Modifier.fillMaxWidth().clickable { /* Logica scatta foto */ }.padding(vertical = 10.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(imageVector = Icons.Default.CameraAlt, contentDescription = null, tint = coloreRossoTesto, modifier = Modifier.size(22.dp))
+                        Icon(painter = painterResource(id = R.drawable.ic_camera), contentDescription = null, tint = coloreRossoTesto, modifier = Modifier.size(22.dp))
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(text = "Scatta una foto direttamente", color = coloreCrema, fontSize = 14.sp)
                     }
@@ -124,7 +125,7 @@ fun ProfileScreen() {
                         modifier = Modifier.fillMaxWidth().clickable { /* Logica galleria */ }.padding(vertical = 10.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(imageVector = Icons.Default.PhotoLibrary, contentDescription = null, tint = coloreRossoTesto, modifier = Modifier.size(22.dp))
+                        Icon(painter = painterResource(id = R.drawable.ic_photolibrary), contentDescription = null, tint = coloreRossoTesto, modifier = Modifier.size(22.dp))
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(text = "Seleziona dalla galleria", color = coloreCrema, fontSize = 14.sp)
                     }
@@ -163,7 +164,7 @@ fun ProfileScreen() {
                 }
                 Column(modifier = Modifier.weight(1f)) {
                     SectionTitle("WATCHLIST")
-                    listaWatchlist.forEach { MovieItem(it, "Da vedere", Icons.Default.Bookmark, coloreOro, coloreCrema, coloreRossoTesto) }
+                    listaWatchlist.forEach { MovieItem(it, "Da vedere", ImageVector.vectorResource(id = R.drawable.ic_bookmark), coloreOro, coloreCrema, coloreRossoTesto) }
                 }
             }
             Spacer(modifier = Modifier.height(40.dp))
