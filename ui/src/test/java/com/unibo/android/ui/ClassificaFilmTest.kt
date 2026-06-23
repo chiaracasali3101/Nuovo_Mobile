@@ -13,6 +13,7 @@ class ClassificaScreenTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
+
     @Test
     fun classifica_mostraCorrettamenteIDatiA_Schermo() {
         val fakeMovies = listOf(
