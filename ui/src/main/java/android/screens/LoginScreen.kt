@@ -32,7 +32,6 @@ fun LoginScreen(
     val coloreOro = Color(0xFFE6A341)
     val coloreRossoBottoni = Color(0xFF8C0902)
 
-    // --- MODIFICA EFFETTUATA QUI ---
     // Colore rosso scuro pieno, senza trasparenza, coordinato con il profilo
     val contenitoreInput = Color(0xFF5C0805)
 

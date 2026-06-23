@@ -41,4 +41,10 @@ class FilmRepository(
             e.printStackTrace()
         }
     }
+
+    private fun getFilmPopolari(apiKey: String) {}
+
+    fun getFilmById(id: Int): FilmEntity? {
+        return TODO("Provide the return value")
+    }
 }

@@ -1,4 +1,11 @@
-package com.unibo.android.android.data.repositories 
+package com.unibo.android.android.data.repositories
+
+import com.unibo.android.data.local.FilmDao
+import com.unibo.android.data.remote.FilmApiService
+import com.unibo.android.data.repository.FilmRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+
 
 class FilmRepositoryImpl(
     private val filmDao: FilmDao,
