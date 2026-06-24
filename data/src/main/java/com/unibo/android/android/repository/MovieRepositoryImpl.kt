@@ -12,11 +12,12 @@ class MovieRepositoryImpl(
     private val apiKey: String
 ) : MovieRepository {
 
-    private val _movieList = MutableStateFlow<List<Any>>(emptyList())
-    override val movieList: StateFlow<List<Any>> = _movieList.asStateFlow()
+    //private val _movieList = MutableStateFlow<List<Any>>(emptyList())
+    //override val movieList: StateFlow<List<Any>> = _movieList.asStateFlow()
+    private val _movieList = MutableStateFlow<List<FilmEntity>>(emptyList())
+    override val movieList: StateFlow<List<FilmEntity>> = _movieList.asStateFlow()
 
     override fun startFetchMovieList() {
-        // Corpo vuoto per non generare errori, soddisfa l'interfaccia
     }
 
     override suspend fun getPopularMovies(): List<FilmEntity> {
@@ -31,7 +32,7 @@ class MovieRepositoryImpl(
                     genere = "Cinema",
                     durata = "N/D",
                     regista = "N/D",
-                    punteggio = "5",
+                    punteggio = 5.0,
                     percorsoLocandina = dto.poster_path ?: "",
                     preferito = false
                 )
@@ -53,7 +54,7 @@ class MovieRepositoryImpl(
                     genere = "Cinema",
                     durata = "N/D",
                     regista = "N/D",
-                    punteggio = "5",
+                    punteggio = 5.0,
                     percorsoLocandina = dto.poster_path ?: "",
                     preferito = false
                 )
@@ -62,4 +63,9 @@ class MovieRepositoryImpl(
             emptyList()
         }
     }
+
+    override suspend fun getFilmsByQuery(query: String): List<FilmEntity> {
+        TODO("Not yet implemented")
+    }
+
 }

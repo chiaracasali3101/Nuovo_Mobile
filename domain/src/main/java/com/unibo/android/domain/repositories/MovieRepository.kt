@@ -7,12 +7,13 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface MovieRepository {
     //chiara
-    val movieList: StateFlow<List<FilmType>>
+    val movieList: StateFlow<List<FilmEntity>>
     fun startFetchMovieList()
 
     //laura
     suspend fun getPopularMovies(): List<FilmEntity>
 
-    suspend fun getTopRatedMovies(): List<MovieDto>
+    suspend fun getTopRatedMovies(): List<FilmEntity>
+    suspend fun getFilmsByQuery(query: String): List<FilmEntity>
 
 }

@@ -1,7 +1,7 @@
-package com.unibo.android.corsolp2526.data.repository
+/*package com.unibo.android.corsolp2526.data.repository
 
-import com.unibo.android.corsolp2526.domain.repository.MovieRepository
 import com.unibo.android.corsolp2526.data.api.RetrofitClient
+import com.unibo.android.domain.repositories.MovieRepository
 
 object RepositoryProviderImpl {
 
@@ -11,4 +11,4 @@ object RepositoryProviderImpl {
             apiKey = "ff7d85461d0b3707a3ff91e938da61d2"
         )
     }
-}
+}*/

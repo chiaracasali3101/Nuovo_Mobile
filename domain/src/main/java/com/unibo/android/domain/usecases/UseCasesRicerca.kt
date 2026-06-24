@@ -1,10 +1,11 @@
 package com.unibo.android.domain.di
 
-import com.unibo.android.domain.models.FilmEntity
+import com.unibo.android.data.entities.FilmEntity
 import com.unibo.android.domain.repositories.FilmRepository
+import com.unibo.android.domain.repositories.MovieRepository
 
 class UseCasesRicerca(
-    private val repository: FilmRepository
+    private val repository: MovieRepository
 ) {
 
     suspend operator fun invoke(query: String): List<FilmEntity> {
@@ -14,3 +15,4 @@ class UseCasesRicerca(
     fun execute(query: String) {}
 
 }
+
