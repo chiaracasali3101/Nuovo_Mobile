@@ -2,9 +2,11 @@ package com.unibo.android.android.data.repositories
 
 import com.unibo.android.data.local.FilmDao
 import com.unibo.android.data.remote.FilmApiService
-import com.unibo.android.data.repository.FilmRepository
+import com.unibo.android.domain.repositories.FilmRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import com.unibo.android.domain.models.Film
+import kotlinx.coroutines.flow.flow
 
 
 class FilmRepositoryImpl(
@@ -14,10 +16,10 @@ class FilmRepositoryImpl(
 
     private val BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w500"
 
-    override suspend fun getTuttiIFilm(): Flow<List<DomainFilmEntity>> {
-        return filmDao.getTuttiIFilm().map { listaDeiDataFilm ->
+    override suspend fun getTuttiIFilm(): Flow<List<Film>> {
+       /* return filmDao.getTuttiIFilm().map { listaDeiDataFilm ->
             listaDeiDataFilm.map { dataFilm ->
-                DomainFilmEntity(
+                Film(
                     id = dataFilm.id,
                     titolo = dataFilm.titolo,
                     anno = dataFilm.anno,
@@ -30,12 +32,13 @@ class FilmRepositoryImpl(
                     preferito = dataFilm.preferito
                 )
             }
-        }
+        }*/
+        return flow(emptyList<>())
     }
 
-    override suspend fun getFilmsByQuery(query: String): List<DomainFilmEntity> {
+    override suspend fun getFilmsByQuery(query: String): List<Film> {
         return filmDao.getFilmsByQuery(query).map { dataFilm ->
-            DomainFilmEntity(
+            Film(
                 id = dataFilm.id,
                 titolo = dataFilm.titolo,
                 anno = dataFilm.anno,
@@ -50,9 +53,9 @@ class FilmRepositoryImpl(
         }
     }
 
-    override suspend fun getFilmById(id: Int): DomainFilmEntity? {
+    override suspend fun getFilmById(id: Int): Film? {
         val dataFilm = filmDao.getFilmById(id) ?: return null
-        return DomainFilmEntity(
+        return Film(
             id = dataFilm.id,
             titolo = dataFilm.titolo,
             anno = dataFilm.anno,
@@ -66,11 +69,11 @@ class FilmRepositoryImpl(
         )
     }
 
-    override suspend fun cercaFilmOnline(apiKey: String, query: String): List<DomainFilmEntity> {
+    override suspend fun cercaFilmOnline(apiKey: String, query: String): List<Film> {
         return try {
             val risposta = apiService.cercaFilm(apiKey = apiKey, query = query)
             risposta.results.map { dto ->
-                DomainFilmEntity(
+                Film(
                     id = dto.id,
                     titolo = dto.titolo,
                     anno = "N/D",
@@ -78,7 +81,7 @@ class FilmRepositoryImpl(
                     genere = "Cinema",
                     durata = "N/D",
                     regista = "N/D",
-                    punteggio = "5",
+                    punteggio = 5.0,
                     percorsoLocandina = dto.percorsoLocandina ?: "",
                     preferito = false
                 )
@@ -95,7 +98,7 @@ class FilmRepositoryImpl(
 
             risposta.results.forEach { dto ->
                 filmDao.addWatchlist(
-                    movie = DataFilmEntity(
+                    movie = Film(
                         id = dto.id,
                         titolo = dto.titolo,
                         anno = "N/D",
@@ -103,7 +106,7 @@ class FilmRepositoryImpl(
                         genere = "Cinema",
                         durata = "N/D",
                         regista = "N/D",
-                        punteggio = "5",
+                        punteggio = 5.0,
                         percorsoLocandina = dto.percorsoLocandina ?: "",
                         preferito = false
                     )

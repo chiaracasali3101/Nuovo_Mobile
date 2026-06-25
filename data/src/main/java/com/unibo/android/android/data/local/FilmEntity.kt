@@ -1,4 +1,4 @@
-package com.unibo.android.data.entities
+package com.unibo.android.android.data.local
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

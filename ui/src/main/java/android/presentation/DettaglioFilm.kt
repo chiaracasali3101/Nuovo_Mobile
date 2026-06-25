@@ -37,7 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.unibo.android.data.entities.FilmEntity
+import com.unibo.android.android.data.local.FilmEntity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

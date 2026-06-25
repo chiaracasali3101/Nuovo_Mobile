@@ -2,7 +2,7 @@ package com.unibo.android.corsolp2526.data.api
 
 import retrofit2.http.GET
 import retrofit2.http.Query
-import com.unibo.android.corsolp2526.data.model.MovieResponse
+import com.unibo.android.android.data.remote.MovieResponse
 interface TmdbApi {
     //laura
     @GET("movie/popular")

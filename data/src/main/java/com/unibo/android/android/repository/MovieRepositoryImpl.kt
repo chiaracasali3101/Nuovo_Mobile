@@ -2,7 +2,7 @@ package com.unibo.android.corsolp2526.data.repository
 
 import com.unibo.android.corsolp2526.data.api.TmdbApi
 import com.unibo.android.domain.repositories.MovieRepository
-import com.unibo.android.data.entities.FilmEntity
+import com.unibo.android.android.data.local.FilmEntity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
