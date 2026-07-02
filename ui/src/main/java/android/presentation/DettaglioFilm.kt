@@ -37,11 +37,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.unibo.android.android.data.local.FilmEntity
+import com.unibo.android.domain.models.Film
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DettaglioFilm(film: FilmEntity, onBack: () -> Unit) {
+fun DettaglioFilm(film: Film, onBack: () -> Unit) {
     Scaffold(
         containerColor = DeepMaroon,
         topBar = {
@@ -86,11 +86,13 @@ fun DettaglioFilm(film: FilmEntity, onBack: () -> Unit) {
             )
             Column(modifier = Modifier.padding(16.dp)) {
                 // titolo
-                Text(
-                    text = film.titolo,
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = WarmCream
-                )
+                film.titolo?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = WarmCream
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -111,11 +113,11 @@ fun DettaglioFilm(film: FilmEntity, onBack: () -> Unit) {
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(text = "•", color = LightMutedCream)
                     Spacer(modifier = Modifier.width(12.dp))
-                    Text(text = film.anno, color = LightMutedCream)
+                    film.anno?.let { Text(text = it, color = LightMutedCream) }
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(text = "•", color = LightMutedCream)
                     Spacer(modifier = Modifier.width(12.dp))
-                    Text(text = film.durata, color = LightMutedCream)
+                    film.durata?.let { Text(text = it, color = LightMutedCream) }
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -129,12 +131,14 @@ fun DettaglioFilm(film: FilmEntity, onBack: () -> Unit) {
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Text(
-                    text = film.trama,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = WarmCream,
-                    lineHeight = 24.sp
-                )
+                film.trama?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = WarmCream,
+                        lineHeight = 24.sp
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(32.dp))
 
@@ -165,7 +169,7 @@ fun DettaglioFilm(film: FilmEntity, onBack: () -> Unit) {
 @Composable
 fun DettaglioFilmPreview() {
     DettaglioFilm(
-        film = FilmEntity(
+        film = Film(
             id = 1,
             titolo = "Inception",
             anno = "2010",

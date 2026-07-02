@@ -23,7 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.unibo.android.corsolp2526.data.model.MovieDto
+import com.unibo.android.domain.models.Film
 
 
 @Composable
@@ -34,7 +34,7 @@ fun ClassificaScreen(viewModel: ClassificaViewModel) {
 }
 
 @Composable
-fun ClassificaContent(listaFilm: List<MovieDto>) {
+fun ClassificaContent(listaFilm: List<Film>) {
     val backgroundColor = Color(0xFF3B0000)
 
     LazyColumn(
@@ -82,10 +82,10 @@ fun ClassificaContent(listaFilm: List<MovieDto>) {
             itemsIndexed(listaFilm) { index, film ->
                 ClassificaItem(
                     posizione = index + 1,
-                    titolo = film.title ?: "Titolo n.d.",
-                    anno = film.releaseDate?.take(4) ?: "Anno n.d.",
-                    voto = film.voteAverage ?: 0.0,
-                    posterPath = film.posterPath
+                    titolo = film.titolo ?: "Titolo n.d.",
+                    anno = film.anno ?.take(4) ?: "Anno n.d.",
+                    voto = film.punteggio ?: 0.0,
+                    posterPath = film.percorsoLocandina
                 )
             }
         }

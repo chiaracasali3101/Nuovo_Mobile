@@ -1,12 +1,14 @@
 package com.unibo.android.android.data.repositories
 
+import android.graphics.Movie
+import com.unibo.android.android.data.local.FilmEntity
 import com.unibo.android.data.local.FilmDao
 import com.unibo.android.data.remote.FilmApiService
 import com.unibo.android.domain.repositories.FilmRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import com.unibo.android.domain.models.Film
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 
 
 class FilmRepositoryImpl(
@@ -17,23 +19,22 @@ class FilmRepositoryImpl(
     private val BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w500"
 
     override suspend fun getTuttiIFilm(): Flow<List<Film>> {
-       /* return filmDao.getTuttiIFilm().map { listaDeiDataFilm ->
-            listaDeiDataFilm.map { dataFilm ->
+       return filmDao.getTuttiIFilm().map { listaDeiDataFilm ->
+            listaDeiDataFilm.map { Film ->
                 Film(
-                    id = dataFilm.id,
-                    titolo = dataFilm.titolo,
-                    anno = dataFilm.anno,
-                    trama = dataFilm.trama,
-                    genere = dataFilm.genere,
-                    durata = dataFilm.durata,
-                    regista = dataFilm.regista,
-                    punteggio = dataFilm.punteggio,
-                    percorsoLocandina = dataFilm.percorsoLocandina,
-                    preferito = dataFilm.preferito
+                    id = Film.id,
+                    titolo = Film.titolo,
+                    anno = Film.anno,
+                    trama = Film.trama,
+                    genere = Film.genere,
+                    durata = Film.durata,
+                    regista = Film.regista,
+                    punteggio = Film.punteggio,
+                    percorsoLocandina = Film.percorsoLocandina,
+                    preferito = Film.preferito
                 )
             }
-        }*/
-        return flow(emptyList<>())
+        }
     }
 
     override suspend fun getFilmsByQuery(query: String): List<Film> {
@@ -98,7 +99,7 @@ class FilmRepositoryImpl(
 
             risposta.results.forEach { dto ->
                 filmDao.addWatchlist(
-                    movie = Film(
+                    FilmEntity(
                         id = dto.id,
                         titolo = dto.titolo,
                         anno = "N/D",

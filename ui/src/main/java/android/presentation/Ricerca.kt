@@ -28,7 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.unibo.android.android.data.local.FilmEntity
+import com.unibo.android.domain.models.Film
 import com.unibo.android.ui.components.FilmCard
 
 val DeepMaroon = Color(0xFF1C0909)
@@ -40,9 +40,9 @@ val LightMutedCream = Color(0xFFD1B08C)
 @Composable
 fun Ricerca(
     query: String,
-    listaFilm: List<FilmEntity>,
+    listaFilm: List<Film>,
     onQueryChange: (String) -> Unit,
-    onMovieClick: (FilmEntity) -> Unit
+    onMovieClick: (Film) -> Unit
 ) {
     Scaffold(
         containerColor = DeepMaroon,
@@ -113,7 +113,7 @@ fun Ricerca(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues),
-                contentPadding = PaddingValues(vertical = 8.dp) // Dà respiro all'inizio e alla fine della lista
+                contentPadding = PaddingValues(vertical = 8.dp)
             ) {
                 items(listaFilm) { film ->
                     Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
@@ -132,7 +132,7 @@ fun Ricerca(
 @Composable
 fun RicercaPreview() {
     val filmFinti = listOf(
-        FilmEntity(
+        Film(
             id = 1,
             titolo = "Batman",
             anno = "2022",
@@ -144,7 +144,7 @@ fun RicercaPreview() {
             percorsoLocandina = "",
             preferito = false
         ),
-        FilmEntity(
+        Film(
             id = 2,
             titolo = "Interstellar",
             anno = "2014",

@@ -5,10 +5,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.unibo.android.domain.models.FilmType
+import com.unibo.android.domain.models.Film
 
 class MovieAdapter(
-    private val movieLines: MutableList<FilmType>
+    private val movieLines: MutableList<Film>
 ) : RecyclerView.Adapter<MovieAdapter.MovieViewHolder>() {
 
     // ViewHolder per gestire i componenti grafici della singola riga
@@ -34,7 +34,7 @@ class MovieAdapter(
     }
 
     // Metodo per aggiornare i dati della RecyclerView
-    fun refreshData(newMovies: List<FilmType>) {
+    fun refreshData(newMovies: List<Film>) {
         movieLines.clear()
         movieLines.addAll(newMovies)
         notifyDataSetChanged()

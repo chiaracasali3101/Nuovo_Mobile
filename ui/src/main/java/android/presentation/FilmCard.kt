@@ -9,10 +9,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.unibo.android.android.data.local.FilmEntity
+import com.unibo.android.domain.models.Film
 
 @Composable
-fun FilmCard(film: FilmEntity, onClick: () -> Unit) {
+fun FilmCard(film: Film, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -30,12 +30,14 @@ fun FilmCard(film: FilmEntity, onClick: () -> Unit) {
                     .height(200.dp),
                 contentScale = ContentScale.Crop
             )
-            Text(
-                text = film.titolo,
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(8.dp),
-                maxLines = 1
-            )
+            film.titolo?.let {
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(8.dp),
+                    maxLines = 1
+                )
+            }
         }
     }
 }
@@ -43,5 +45,5 @@ fun FilmCard(film: FilmEntity, onClick: () -> Unit) {
 @Preview
 @Composable
 fun FilmCardPreview(){
-    FilmCard(FilmEntity(id = 0, titolo = "prova", anno = "2010", trama = "jjj", genere = "horror", durata = "120", regista = "titi", punteggio = 10.0, percorsoLocandina = "jjjj" )) { }
+    FilmCard(Film(id = 0, titolo = "prova", anno = "2010", trama = "jjj", genere = "horror", durata = "120", regista = "titi", punteggio = 10.0, percorsoLocandina = "/../../invalid_path_to_skip_network" )) { }
 }
