@@ -1,5 +1,6 @@
-package com.unibo.android.ui.adapters
+package android.adapters
 
+import android.R
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,13 +14,13 @@ class MovieAdapter(
 
     // ViewHolder per gestire i componenti grafici della singola riga
     class MovieViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val titleText: TextView = view.findViewById(android.R.id.text1)
+        val titleText: TextView = view.findViewById(R.id.text1)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
         // Inflate del layout standard per gli elementi della lista
         val view = LayoutInflater.from(parent.context)
-            .inflate(android.R.layout.simple_list_item_1, parent, false)
+            .inflate(R.layout.simple_list_item_1, parent, false)
         return MovieViewHolder(view)
     }
 

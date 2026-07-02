@@ -1,7 +1,7 @@
 package com.unibo.android.domain.di
 
 import com.unibo.android.domain.repositories.MovieRepository
-import com.unibo.android.domain.di.UseCasesRicerca
+import com.unibo.android.domain.usecases.UseCasesRicerca
 import com.unibo.android.domain.repositories.FilmRepository
 import com.unibo.android.domain.usecases.UseCasesVisualizza
 

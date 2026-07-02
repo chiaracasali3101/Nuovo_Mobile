@@ -3,8 +3,8 @@ package com.unibo.android.ui
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import com.unibo.android.ui.home.Curiosita
-import com.unibo.android.ui.home.HomeContent
+import android.home.Curiosita
+import android.home.HomeContent
 import org.junit.Rule
 import org.junit.Test
 

@@ -1,4 +1,4 @@
-package com.unibo.android.ui.screens
+package android.presentation
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -59,7 +59,7 @@ fun DettaglioFilm(film: Film, onBack: () -> Unit) {
                     navigationIcon = {
                         IconButton(onClick = onBack) {
                             Icon(
-                                imageVector = androidx.compose.material.icons.Icons.Filled.ArrowBack,
+                                imageVector = Icons.Filled.ArrowBack,
                                 contentDescription = "Torna indietro"
                             )
                         }
@@ -157,7 +157,7 @@ fun DettaglioFilm(film: Film, onBack: () -> Unit) {
                     Text(
                         text = "AGGIUNGI ALLA WATCHLIST",
                         style = MaterialTheme.typography.labelLarge,
-                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }

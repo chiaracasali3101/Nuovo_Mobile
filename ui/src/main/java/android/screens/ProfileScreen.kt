@@ -1,4 +1,4 @@
-package com.unibo.android.ui.screens
+package android.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

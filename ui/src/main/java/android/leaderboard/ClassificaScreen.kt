@@ -1,4 +1,4 @@
-package com.unibo.android.ui.leaderboard
+package android.leaderboard
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

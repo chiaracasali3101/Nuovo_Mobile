@@ -1,4 +1,4 @@
-package com.unibo.android.domain.di
+package com.unibo.android.domain.usecases
 
 import com.unibo.android.domain.models.Film
 import com.unibo.android.domain.repositories.MovieRepository

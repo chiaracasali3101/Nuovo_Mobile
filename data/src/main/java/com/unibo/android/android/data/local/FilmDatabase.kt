@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.unibo.android.data.local.FilmDao
 
 @Database(entities = [FilmEntity::class], version = 1, exportSchema = false)
 abstract class FilmDatabase : RoomDatabase() {

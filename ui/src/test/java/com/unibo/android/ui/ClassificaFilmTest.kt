@@ -3,8 +3,8 @@ package com.unibo.android.ui
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import com.unibo.android.corsolp2526.data.model.MovieDto
-import com.unibo.android.ui.leaderboard.ClassificaContent
+import model.MovieDto
+import android.leaderboard.ClassificaContent
 import org.junit.Rule
 import org.junit.Test
 

@@ -1,12 +1,18 @@
 package com.unibo.android.domain.repositories
 
-import com.unibo.android.domain.models.Film
 import kotlinx.coroutines.flow.Flow
+import com.unibo.android.domain.Film
+
 
 interface FilmRepository {
-    suspend fun getTuttiIFilm(): Flow<List<Film>>
-    suspend fun getFilmsByQuery(query: String): List<Film>
-    suspend fun getFilmById(id: Int): Film?
-    suspend fun cercaFilmOnline(apiKey: String, query: String): List<Film>
+
+    fun getTuttiIFilm(): Flow<List<com.unibo.android.domain.models.Film>>
+
+    suspend fun getFilmsByQuery(query: String): List<com.unibo.android.domain.models.Film>
+
+    suspend fun getFilmById(id: Int): com.unibo.android.domain.models.Film?
+
+    suspend fun cercaFilmOnline(apiKey: String, query: String): List<com.unibo.android.domain.models.Film>
+
     suspend fun sincronizzaFilm(apiKey: String)
 }

@@ -1,4 +1,4 @@
-package com.unibo.android.ui.screens
+package android.presentation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -29,7 +29,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.unibo.android.domain.models.Film
-import com.unibo.android.ui.components.FilmCard
 
 val DeepMaroon = Color(0xFF1C0909)
 val WarmCream = Color(0xFFF3F0DF)

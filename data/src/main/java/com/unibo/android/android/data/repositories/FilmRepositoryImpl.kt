@@ -1,15 +1,12 @@
 package com.unibo.android.android.data.repositories
 
-import android.graphics.Movie
 import com.unibo.android.android.data.local.FilmEntity
-import com.unibo.android.data.local.FilmDao
+import com.unibo.android.android.data.local.FilmDao
 import com.unibo.android.data.remote.FilmApiService
 import com.unibo.android.domain.repositories.FilmRepository
-import kotlinx.coroutines.flow.Flow
 import com.unibo.android.domain.models.Film
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-
 
 class FilmRepositoryImpl(
     private val filmDao: FilmDao,
@@ -18,63 +15,26 @@ class FilmRepositoryImpl(
 
     private val BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w500"
 
-    override suspend fun getTuttiIFilm(): Flow<List<Film>> {
-       return filmDao.getTuttiIFilm().map { listaDeiDataFilm ->
-            listaDeiDataFilm.map { Film ->
-                Film(
-                    id = Film.id,
-                    titolo = Film.titolo,
-                    anno = Film.anno,
-                    trama = Film.trama,
-                    genere = Film.genere,
-                    durata = Film.durata,
-                    regista = Film.regista,
-                    punteggio = Film.punteggio,
-                    percorsoLocandina = Film.percorsoLocandina,
-                    preferito = Film.preferito
-                )
-            }
+    override fun getTuttiIFilm(): Flow<List<Film>> {
+        return filmDao.getTuttiIFilm().map { listaEntity ->
+            listaEntity.map { entity -> entity.toDomain() }
         }
     }
 
     override suspend fun getFilmsByQuery(query: String): List<Film> {
-        return filmDao.getFilmsByQuery(query).map { dataFilm ->
-            Film(
-                id = dataFilm.id,
-                titolo = dataFilm.titolo,
-                anno = dataFilm.anno,
-                trama = dataFilm.trama,
-                genere = dataFilm.genere,
-                durata = dataFilm.durata,
-                regista = dataFilm.regista,
-                punteggio = dataFilm.punteggio,
-                percorsoLocandina = dataFilm.percorsoLocandina,
-                preferito = dataFilm.preferito
-            )
-        }
+        return filmDao.getFilmsByQuery(query).map { it.toDomain() }
     }
 
     override suspend fun getFilmById(id: Int): Film? {
-        val dataFilm = filmDao.getFilmById(id) ?: return null
-        return Film(
-            id = dataFilm.id,
-            titolo = dataFilm.titolo,
-            anno = dataFilm.anno,
-            trama = dataFilm.trama,
-            genere = dataFilm.genere,
-            durata = dataFilm.durata,
-            regista = dataFilm.regista,
-            punteggio = dataFilm.punteggio,
-            percorsoLocandina = dataFilm.percorsoLocandina,
-            preferito = dataFilm.preferito
-        )
+        return filmDao.getFilmById(id)?.toDomain()
     }
 
     override suspend fun cercaFilmOnline(apiKey: String, query: String): List<Film> {
         return try {
             val risposta = apiService.cercaFilm(apiKey = apiKey, query = query)
             risposta.results.map { dto ->
-                Film(
+                // Creiamo l'entità locale temporanea
+                val entity = FilmEntity(
                     id = dto.id,
                     titolo = dto.titolo,
                     anno = "N/D",
@@ -86,6 +46,8 @@ class FilmRepositoryImpl(
                     percorsoLocandina = dto.percorsoLocandina ?: "",
                     preferito = false
                 )
+                // La convertiamo usando la funzione toDomain corretta
+                entity.toDomain()
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -117,4 +79,17 @@ class FilmRepositoryImpl(
             e.printStackTrace()
         }
     }
+}
+
+fun FilmEntity.toDomain(): Film {
+    return Film(
+        titolo = this.titolo,
+        anno = this.anno,
+        trama = this.trama,
+        genere = this.genere,
+        durata = this.durata,
+        regista = this.regista,
+        punteggio = this.punteggio,
+        preferito = this.preferito
+    )
 }

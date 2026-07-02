@@ -3,7 +3,7 @@ package com.unibo.android.ui
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.assertIsDisplayed
-import com.unibo.android.ui.screens.ProfileScreen
+import android.screens.ProfileScreen
 import org.junit.Rule
 import org.junit.Test
 

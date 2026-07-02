@@ -1,4 +1,4 @@
-package com.unibo.android.ui.components
+package android.presentation
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
