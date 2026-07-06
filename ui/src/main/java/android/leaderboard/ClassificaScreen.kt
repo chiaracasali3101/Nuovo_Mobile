@@ -1,5 +1,6 @@
-package android.leaderboard
+package com.unibo.android.ui.leaderboard
 
+import android.leaderboard.ClassificaViewModel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,6 +25,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.unibo.android.domain.models.Film
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 
 
 @Composable
@@ -158,6 +162,38 @@ fun ClassificaItem(posizione: Int, titolo: String, anno: String, voto: Double, p
                     fontWeight = FontWeight.Bold
                 )
             }
+        }
+    }
+}
+@Preview(showBackground = true)
+@Composable
+fun ClassificaPreview() {
+    MaterialTheme {
+        Surface {
+            // Creiamo una lista realistica per riempire la schermata
+            val listaFilmFinti = listOf(
+                Film(
+                    titolo = "Il Padrino",
+                    anno = "1972-03-14",
+                    punteggio = 9.2,
+                    percorsoLocandina = "/3bhkrj58Vtu7enYsRolD1fZdja1.jpg" // Formato tipico di TMDB
+                ),
+                Film(
+                    titolo = "Le ali della libertà",
+                    anno = "1994-09-23",
+                    punteggio = 8.7,
+                    percorsoLocandina = "/q6y0Go1tsGEsmtFryDOJo3dENvU.jpg"
+                ),
+                Film(
+                    titolo = "Il Signore degli Anelli - Il ritorno del re",
+                    anno = "2003-12-01",
+                    punteggio = 8.5,
+                    percorsoLocandina = "/rCzpDGLbOoPwLjy3OAm5NUPOTrC.jpg"
+                )
+            )
+
+            // Passiamo la lista finta al tuo layout
+            ClassificaContent(listaFilm = listaFilmFinti)
         }
     }
 }
