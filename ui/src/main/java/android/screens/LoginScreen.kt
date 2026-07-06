@@ -1,4 +1,4 @@
-package android.screens
+package com.unibo.android.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -108,11 +108,11 @@ fun LoginScreen(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(10.dp),
             visualTransformation = if (passwordVisibile) VisualTransformation.None else PasswordVisualTransformation(),
-            trailingIcon = {
+            trailingIcon = { /*
                 val immagineIcona = if (passwordVisibile) R.drawable.ic_visibility else R.drawable.ic_visibility_off
                 IconButton(onClick = { passwordVisibile = !passwordVisibile }) {
                     Icon(painter = painterResource(id = immagineIcona), contentDescription = null, tint = coloreCrema.copy(alpha = 0.6f))
-                }
+                } */
             },
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = contenitoreInput,
@@ -157,8 +157,12 @@ fun LoginScreen(
     }
 }
 
-@Preview(showBackground = true, widthDp = 400, heightDp = 800)
+@Preview(showSystemUi = true)
 @Composable
 fun LoginPreview() {
-    LoginScreen()
+    MaterialTheme {
+        Surface(modifier = Modifier.fillMaxSize()) {
+            LoginScreen()
+        }
+    }
 }
