@@ -170,13 +170,12 @@ fun ClassificaItem(posizione: Int, titolo: String, anno: String, voto: Double, p
 fun ClassificaPreview() {
     MaterialTheme {
         Surface {
-            // Creiamo una lista realistica per riempire la schermata
             val listaFilmFinti = listOf(
                 Film(
                     titolo = "Il Padrino",
                     anno = "1972-03-14",
                     punteggio = 9.2,
-                    percorsoLocandina = "/3bhkrj58Vtu7enYsRolD1fZdja1.jpg" // Formato tipico di TMDB
+                    percorsoLocandina = "/3bhkrj58Vtu7enYsRolD1fZdja1.jpg"
                 ),
                 Film(
                     titolo = "Le ali della libertà",
@@ -191,8 +190,6 @@ fun ClassificaPreview() {
                     percorsoLocandina = "/rCzpDGLbOoPwLjy3OAm5NUPOTrC.jpg"
                 )
             )
-
-            // Passiamo la lista finta al tuo layout
             ClassificaContent(listaFilm = listaFilmFinti)
         }
     }
