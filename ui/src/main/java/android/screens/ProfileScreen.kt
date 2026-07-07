@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.unibo.android.ui.R
 import androidx.compose.ui.res.vectorResource
-// 🛠️ IMPORTA LA TUA NAVBAR (Aggiusta il pacchetto se l'hai messa altrove)
 import com.unibo.android.ui.components.ReViewBottomBar
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,15 +44,14 @@ fun ProfileScreen() {
     )
     val listaWatchlist = listOf("Dune: Part Two", "Oppenheimer", "The Batman", "Blade Runner 2049", "Gladiator 2")
 
-    // 🛠️ MODIFICATO: Inseriamo lo Scaffold come guscio esterno per ospitare la barra
     Scaffold(
         bottomBar = { ReViewBottomBar() },
-        containerColor = Color.Transparent // Lascia intravedere i tuoi sfondi personalizzati
+        containerColor = Color.Transparent
     ) { innerPadding ->
 
         Box(modifier = Modifier.fillMaxSize().background(sfondoMarrone)) {
 
-            // --- SFONDO SFUMATO ---
+
             Box(modifier = Modifier.fillMaxWidth().height(420.dp)) {
                 Image(
                     painter = painterResource(id = R.drawable.sfondo_profilo),
@@ -70,14 +68,11 @@ fun ProfileScreen() {
                 )
             }
 
-            // --- CONTENUTO IN COLONNA REGOLE ---
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
                     .padding(horizontal = 20.dp)
-                    // 🛠️ MODIFICATO: Diciamo alla colonna di fermarsi esattamente sopra la NavBar
-                    // evitando che gli ultimi film della lista finiscano nascosti sotto la barra.
                     .padding(bottom = innerPadding.calculateBottomPadding()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -92,7 +87,6 @@ fun ProfileScreen() {
                 Text(text = "IL TUO PROFILO", color = coloreCrema, fontSize = 13.sp, fontWeight = FontWeight.Bold, letterSpacing = 2.sp)
                 Spacer(modifier = Modifier.height(45.dp))
 
-                // --- FOTO PROFILO ---
                 Box(
                     modifier = Modifier.size(120.dp).clip(CircleShape).background(sfondoMarrone).border(3.dp, coloreOro, CircleShape),
                     contentAlignment = Alignment.Center
@@ -106,7 +100,6 @@ fun ProfileScreen() {
 
                 Spacer(modifier = Modifier.height(25.dp))
 
-                // --- OPZIONI IMMAGINE DEL PROFILO ---
                 Card(
                     modifier = Modifier.fillMaxWidth(0.9f),
                     colors = CardDefaults.cardColors(containerColor = Color(0xFF3A0605).copy(alpha = 0.7f)),
@@ -140,7 +133,6 @@ fun ProfileScreen() {
 
                 Spacer(modifier = Modifier.height(25.dp))
 
-                // --- STATISTICHE ---
                 Row(modifier = Modifier.fillMaxWidth(0.9f), horizontalArrangement = Arrangement.spacedBy(15.dp)) {
                     StatisticCard(Modifier.weight(1f), "52", "Film Visti", coloreRossoBottoni, coloreCrema)
                     StatisticCard(Modifier.weight(1f), "14", "Recensioni", coloreRossoBottoni, coloreCrema)
@@ -148,7 +140,6 @@ fun ProfileScreen() {
 
                 Spacer(modifier = Modifier.height(25.dp))
 
-                // --- BOTTONE CERCA SALE ---
                 Button(
                     onClick = { },
                     modifier = Modifier.fillMaxWidth(0.9f).height(50.dp),
@@ -162,7 +153,7 @@ fun ProfileScreen() {
 
                 Spacer(modifier = Modifier.height(40.dp))
 
-                // --- LISTE FILM RECENTI E WATCHLIST ---
+
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(15.dp)) {
                     Column(modifier = Modifier.weight(1f)) {
                         SectionTitle("FILM RECENTI")
@@ -179,7 +170,7 @@ fun ProfileScreen() {
     }
 }
 
-// I tuoi componenti secondari rimangono esattamente identici...
+
 @Composable
 fun StatisticCard(modifier: Modifier, value: String, label: String, bgColor: Color, textColor: Color) {
     Card(
