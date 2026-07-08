@@ -77,6 +77,6 @@ dependencies {
 
     //androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.0")
     debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.0")
-
     testImplementation("androidx.compose.ui:ui-test-junit4:1.6.0")
+    implementation("org.osmdroid:osmdroid-android:6.1.18")
 }
