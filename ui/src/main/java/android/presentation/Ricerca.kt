@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.unibo.android.domain.models.Film
 
+
 val DeepMaroon = Color(0xFF1C0909)
 val WarmCream = Color(0xFFF3F0DF)
 val BoldRed = Color(0xFFB22222)
@@ -61,10 +62,10 @@ fun Ricerca(
                         modifier = Modifier.fillMaxWidth(),
                         placeholder = { Text("Cerca un film...", color = LightMutedCream) },
                         singleLine = true,
-                        shape = MaterialTheme.shapes.medium, // Arrotondato coerente con il vostro profilo
+                        shape = MaterialTheme.shapes.medium,
                         leadingIcon = {
                             Icon(
-                                imageVector = Icons.Filled.Search, // Icona lente d'ingrandimento corretta
+                                imageVector = Icons.Filled.Search,
                                 contentDescription = "Cerca",
                                 tint = LightMutedCream
                             )
@@ -116,6 +117,7 @@ fun Ricerca(
             ) {
                 items(listaFilm) { film ->
                     Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+                       // Text(text = film.titolo ?: "Film senza titolo", color = WarmCream)
                         FilmCard(
                             film = film,
                             onClick = { onMovieClick(film) }
@@ -163,4 +165,4 @@ fun RicercaPreview() {
         onQueryChange = { },
         onMovieClick = { }
     )
-}
+}       

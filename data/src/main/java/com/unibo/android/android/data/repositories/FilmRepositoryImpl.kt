@@ -90,6 +90,7 @@ fun FilmEntity.toDomain(): Film {
         durata = this.durata,
         regista = this.regista,
         punteggio = this.punteggio,
+        percorsoLocandina = this.percorsoLocandina,
         preferito = this.preferito
     )
 }
