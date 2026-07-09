@@ -50,7 +50,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DettaglioFilm(film: Film, onBack: () -> Unit) {
+fun DettaglioFilm(film: Film, onBack: () -> Unit, onInviaRecensione: (String) -> Unit) {
     // Stato per salvare il testo della recensione inserito dall'utente
     var testoRecensione by remember { mutableStateOf("") }
     Scaffold(
@@ -138,8 +138,8 @@ fun DettaglioFilm(film: Film, onBack: () -> Unit) {
 
                 Button(
                     onClick = {
-                        // salvare la recensione nel DB
-                        testoRecensione = "" // Resetta il campo dopo l'invio
+                        onInviaRecensione(testoRecensione)
+                        testoRecensione = ""
                     },
                     modifier = Modifier.align(Alignment.End),
                     enabled = testoRecensione.isNotBlank(), // Si attiva solo se c'è testo scritto
@@ -201,7 +201,7 @@ fun DettaglioFilm(film: Film, onBack: () -> Unit) {
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                // bottone
+                // bottone recensione
                 Button(
                     onClick = { /* Azione per salvare */ },
                     modifier = Modifier
@@ -240,6 +240,7 @@ fun DettaglioFilmPreview() {
             percorsoLocandina = "",
             preferito = false
         ),
-        onBack = {  }
+        onBack = { },
+        onInviaRecensione = { } // Mettiamo questo blocco vuoto per non far arrabbiare la Preview!
     )
 }
