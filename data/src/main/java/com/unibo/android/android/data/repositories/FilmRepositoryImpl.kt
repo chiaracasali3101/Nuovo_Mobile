@@ -4,17 +4,56 @@ import com.unibo.android.android.data.local.FilmEntity
 import com.unibo.android.android.data.local.FilmDao
 import com.unibo.android.data.remote.FilmApiService
 import com.unibo.android.domain.repositories.FilmRepository
+import com.unibo.android.domain.repositories.MovieRepository
 import com.unibo.android.domain.models.Film
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 class FilmRepositoryImpl(
     private val filmDao: FilmDao,
-    private val apiService: FilmApiService
-) : FilmRepository {
+    private val apiService: FilmApiService,
+    private val apiKey: String
+) : FilmRepository, MovieRepository {
 
     private val BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w500"
 
+    // --- MovieRepository ---
+    private val _movieList = MutableStateFlow<List<Film>>(emptyList())
+    override val movieList: StateFlow<List<Film>> = _movieList
+
+    override fun startFetchMovieList() {
+        CoroutineScope(Dispatchers.IO).launch {
+            _movieList.value = getPopularMovies()
+        }
+    }
+
+    override suspend fun getPopularMovies(): List<Film> {
+        return apiService.getFilmPopolari(apiKey = apiKey).results.map { dto ->
+            FilmEntity(
+                id = dto.id,
+                titolo = dto.titolo,
+                anno = "N/D",
+                trama = dto.trama ?: "Nessuna trama disponibile",
+                genere = "Cinema",
+                durata = "N/D",
+                regista = "N/D",
+                punteggio = 5.0,
+                percorsoLocandina = dto.percorsoLocandina ?: "",
+                preferito = false
+            ).toDomain()
+        }
+    }
+
+    override suspend fun getTopRatedMovies(): List<Film> {
+        return getPopularMovies()
+    }
+
+    // --- FilmRepository ---
     override fun getTuttiIFilm(): Flow<List<Film>> {
         return filmDao.getTuttiIFilm().map { listaEntity ->
             listaEntity.map { entity -> entity.toDomain() }
@@ -33,7 +72,6 @@ class FilmRepositoryImpl(
         return try {
             val risposta = apiService.cercaFilm(apiKey = apiKey, query = query)
             risposta.results.map { dto ->
-                // Creiamo l'entità locale temporanea
                 val entity = FilmEntity(
                     id = dto.id,
                     titolo = dto.titolo,
@@ -46,7 +84,6 @@ class FilmRepositoryImpl(
                     percorsoLocandina = dto.percorsoLocandina ?: "",
                     preferito = false
                 )
-                // La convertiamo usando la funzione toDomain corretta
                 entity.toDomain()
             }
         } catch (e: Exception) {
@@ -58,7 +95,6 @@ class FilmRepositoryImpl(
     override suspend fun sincronizzaFilm(apiKey: String) {
         try {
             val risposta = apiService.getFilmPopolari(apiKey)
-
             risposta.results.forEach { dto ->
                 filmDao.addWatchlist(
                     FilmEntity(

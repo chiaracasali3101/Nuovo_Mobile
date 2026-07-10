@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     id("org.jetbrains.kotlin.android")
@@ -17,6 +19,10 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
+        val localProperties = Properties()
+        localProperties.load(rootProject.file("local.properties").inputStream())
+
+        buildConfigField("String", "TMDB_API_KEY", "\"${localProperties["TMDB_API_KEY"]}\"")
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -44,6 +50,7 @@ android {
     buildFeatures {
         viewBinding = true
         compose = true
+        buildConfig = true
     }
 
     composeOptions {
