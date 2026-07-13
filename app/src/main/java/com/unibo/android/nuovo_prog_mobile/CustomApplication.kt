@@ -1,4 +1,4 @@
-package com.unibo.android.corsolp2526
+package com.unibo.android.nuovo_prog_mobile
 
 import android.app.Application
 import com.unibo.android.corsolp2526.data.repository.RepositoryProviderImpl
@@ -8,6 +8,6 @@ class CustomApplication: Application() {
     override fun onCreate() {
         super.onCreate()
 
-        UseCasesProvider.initialize(repository = RepositoryProviderImpl.movieRepository)
+        UseCasesProvider.initialize(repository = RepositoryProviderImpl.getMovieRepository())
     }
 }

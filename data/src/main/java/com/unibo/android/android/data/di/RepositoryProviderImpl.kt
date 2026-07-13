@@ -56,6 +56,7 @@ package com.unibo.android.corsolp2526.data.repository
 import com.unibo.android.corsolp2526.data.api.RetrofitClient
 import com.unibo.android.domain.repositories.MovieRepository
 
+
 object RepositoryProviderImpl {
 
     fun getMovieRepository(): MovieRepository {
