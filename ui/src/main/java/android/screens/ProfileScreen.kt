@@ -1,5 +1,6 @@
 package android.screens
 
+import android.components.ReViewBottomBar
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -27,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.unibo.android.ui.R
 import androidx.compose.ui.res.vectorResource
-import com.unibo.android.ui.components.ReViewBottomBar
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

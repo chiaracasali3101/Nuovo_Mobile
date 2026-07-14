@@ -16,22 +16,22 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
-import com.unibo.android.ui.components.ReViewBottomBar
 import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import com.unibo.android.ui.R
+import android.components.ReViewBottomBar
 
 @Composable
 fun MapScreen() {
     val isPreview = LocalInspectionMode.current
 
-    Scaffold(
-        bottomBar = { ReViewBottomBar() }
-    ) { innerPadding ->
+        Scaffold(
+            bottomBar = { ReViewBottomBar() }
+        ) { innerPadding ->
 
-        if (isPreview) {
+    if (isPreview) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()

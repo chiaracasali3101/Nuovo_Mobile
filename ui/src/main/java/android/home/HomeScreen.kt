@@ -7,9 +7,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -23,6 +22,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.unibo.android.ui.R
+import android.components.ReViewBottomBar
+
 data class Curiosita(
     val titolo: String,
     val testo: String,
@@ -30,7 +31,7 @@ data class Curiosita(
 )
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(onNavigateToMap: () -> Unit) {
     val listaCuriosita = listOf(
         Curiosita(
             titolo = "1) CHI HA INVENTATO IL CINEMA?",
@@ -59,18 +60,36 @@ fun HomeScreen() {
         )
     )
 
-    HomeContent(listaCuriosita = listaCuriosita)
+    androidx.compose.material3.Scaffold(
+        modifier = androidx.compose.ui.Modifier.fillMaxSize(),
+        bottomBar = {
+            ReViewBottomBar(
+                selectedItem = 0,
+                onItemSelected = { indice: Int ->
+                    if (indice == 3) onNavigateToMap()
+                }
+            )
+        }
+    ) { paddingValori ->
+        // Rimosso il Box, passiamo il padding direttamente alla funzione
+        HomeContent(
+            listaCuriosita = listaCuriosita,
+            paddingEsterno = paddingValori
+        )
+    }
 }
 
-@Composable
-fun HomeContent(listaCuriosita: List<Curiosita>) {
-    val backgroundColor = Color(0xFF3B0000)
+    @Composable
+    fun HomeContent(listaCuriosita: List<Curiosita>, paddingEsterno: PaddingValues) {
+        val backgroundColor = Color(0xFF3B0000)
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(backgroundColor)
-    ) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(backgroundColor),
+            contentPadding = paddingEsterno
+        ) {
+
         item {
             Box(
                 modifier = Modifier
@@ -229,5 +248,5 @@ fun CuriositaRow(curiosita: Curiosita, immagineASinistra: Boolean) {
 @Preview(showBackground = true, widthDp = 1024, heightDp = 3500)
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen()
+    HomeScreen(onNavigateToMap = {})
 }

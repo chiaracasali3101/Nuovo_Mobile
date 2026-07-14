@@ -1,4 +1,4 @@
-package com.unibo.android.ui.components
+package android.components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -11,20 +11,24 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.*
+import androidx.compose.ui.unit.sp
 
 data class NavItem(val label: String, val icon: ImageVector)
 
 @Composable
-fun ReViewBottomBar() {
+fun ReViewBottomBar(
+    selectedItem: Int = 0, // Aggiungendo "= 0" diventa facoltativo
+    onItemSelected: (Int) -> Unit = {} // Aggiungendo "= {}" diventa facoltativo
+) {
     val navItems = listOf(
         NavItem("Home", Icons.Default.Home),
         NavItem("Cerca", Icons.Default.Search),
@@ -33,28 +37,32 @@ fun ReViewBottomBar() {
         NavItem("Login", Icons.Default.Lock)
     )
 
-    // --- IL COLORE ESATTO DEL TUO BASTONCINO "FILM VISTI" ---
     val sfondoNavBar = Color(0xFF5A0000)
     val coloreOro = Color(0xFFFECE79)
     val coloreInattivo = Color.White.copy(alpha = 0.6f)
 
-    var selectedItem by remember { mutableStateOf(0) }
-
     NavigationBar(
         containerColor = sfondoNavBar,
         contentColor = coloreOro,
+        modifier = Modifier.height(85.dp)
     ) {
         navItems.forEachIndexed { index, item ->
             val isSearch = item.label == "Cerca"
 
             NavigationBarItem(
-                selected = selectedItem == index,
-                onClick = { selectedItem = index },
-                icon = { Icon(imageVector = item.icon, contentDescription = item.label) },
-                label = if (isSearch) null else {
-                    { Text(text = item.label) }
+                selected = selectedItem == index, // Parametro 'selected'
+                onClick = { onItemSelected(index) }, // Parametro 'onClick'
+                icon = {
+                    Icon(imageVector = item.icon, contentDescription = item.label)
                 },
-                alwaysShowLabel = !isSearch,
+                label = {
+                    Text(
+                        text = item.label,
+                        fontSize = 12.sp
+                    )
+                },
+                alwaysShowLabel = true,
+                modifier = Modifier.padding(top = 8.dp),
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = sfondoNavBar,
                     indicatorColor = coloreOro,
@@ -71,6 +79,9 @@ fun ReViewBottomBar() {
 @Composable
 fun ReViewBottomBarPreview() {
     MaterialTheme {
-        ReViewBottomBar()
+        ReViewBottomBar(
+            selectedItem = 0,
+            onItemSelected = { }
+        )
     }
 }
