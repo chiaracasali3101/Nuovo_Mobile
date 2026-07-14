@@ -18,6 +18,8 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,6 +32,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,18 +46,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.unibo.android.domain.models.Film
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DettaglioFilm(film: Film, onBack: () -> Unit, onInviaRecensione: (String) -> Unit) {
-    // Stato per salvare il testo della recensione inserito dall'utente
+fun DettaglioFilm(
+    film: Film,
+    onBack: () -> Unit,
+    onInviaRecensione: (String) -> Unit,
+    onAggiungiWatchlist: () -> Unit
+) {
     var testoRecensione by remember { mutableStateOf("") }
+    val recensioni = remember { mutableStateListOf<String>() }
+
     Scaffold(
         containerColor = DeepMaroon,
         topBar = {
@@ -84,7 +91,6 @@ fun DettaglioFilm(film: Film, onBack: () -> Unit, onInviaRecensione: (String) ->
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
         ) {
-            // immagine
             AsyncImage(
                 model = "https://image.tmdb.org/t/p/w500${film.percorsoLocandina}",
                 contentDescription = null,
@@ -107,53 +113,6 @@ fun DettaglioFilm(film: Film, onBack: () -> Unit, onInviaRecensione: (String) ->
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
-
-
-                //recensione
-                Text(
-                    text = "LASCIA UNA RECENSIONE",
-                    style = MaterialTheme.typography.titleSmall,
-                    color = LightMutedCream
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                OutlinedTextField(
-                    value = testoRecensione,
-                    onValueChange = { testoRecensione = it },
-                    placeholder = { Text("Scrivi cosa ne pensi di questo film...", color = LightMutedCream) },
-                    modifier = Modifier.fillMaxWidth(),
-                    minLines = 3,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = WarmCream,
-                        unfocusedTextColor = WarmCream,
-                        focusedBorderColor = BoldRed,
-                        unfocusedBorderColor = LightMutedCream,
-                        cursorColor = BoldRed
-                    ),
-                    shape = MaterialTheme.shapes.medium
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Button(
-                    onClick = {
-                        onInviaRecensione(testoRecensione)
-                        testoRecensione = ""
-                    },
-                    modifier = Modifier.align(Alignment.End),
-                    enabled = testoRecensione.isNotBlank(), // Si attiva solo se c'è testo scritto
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = BoldRed,
-                        contentColor = WarmCream,
-                        disabledContainerColor = LightMutedCream.copy(alpha = 0.3f)
-                    )
-                ) {
-                    Text("INVIA")
-                }
-
-                Spacer(modifier = Modifier.height(24.dp))
-
 
                 // riga dati
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -201,9 +160,81 @@ fun DettaglioFilm(film: Film, onBack: () -> Unit, onInviaRecensione: (String) ->
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                // bottone recensione
+                //recensione
+                Text(
+                    text = "LASCIA UNA RECENSIONE",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = LightMutedCream
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                OutlinedTextField(
+                    value = testoRecensione,
+                    onValueChange = { testoRecensione = it },
+                    placeholder = { Text("Scrivi cosa ne pensi di questo film...", color = LightMutedCream) },
+                    modifier = Modifier.fillMaxWidth(),
+                    minLines = 3,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = WarmCream,
+                        unfocusedTextColor = WarmCream,
+                        focusedBorderColor = BoldRed,
+                        unfocusedBorderColor = LightMutedCream,
+                        cursorColor = BoldRed
+                    ),
+                    shape = MaterialTheme.shapes.medium
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
                 Button(
-                    onClick = { /* Azione per salvare */ },
+                    onClick = {
+                        recensioni.add(0, testoRecensione)
+                        onInviaRecensione(testoRecensione)
+                        testoRecensione = ""
+                    },
+                    modifier = Modifier.align(Alignment.End),
+                    enabled = testoRecensione.isNotBlank(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = BoldRed,
+                        contentColor = WarmCream,
+                        disabledContainerColor = LightMutedCream.copy(alpha = 0.3f)
+                    )
+                ) {
+                    Text("INVIA")
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // lista recensioni inviate
+                if (recensioni.isNotEmpty()) {
+                    Text(
+                        text = "RECENSIONI",
+                        style = MaterialTheme.typography.titleSmall,
+                        color = LightMutedCream
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    recensioni.forEach { recensione ->
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            colors = CardDefaults.cardColors(containerColor = LightMutedCream.copy(alpha = 0.1f))
+                        ) {
+                            Text(
+                                text = recensione,
+                                color = WarmCream,
+                                modifier = Modifier.padding(12.dp)
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                // bottone watchlist
+                Button(
+                    onClick = onAggiungiWatchlist,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp),
@@ -241,6 +272,7 @@ fun DettaglioFilmPreview() {
             preferito = false
         ),
         onBack = { },
-        onInviaRecensione = { } // Mettiamo questo blocco vuoto per non far arrabbiare la Preview!
+        onInviaRecensione = { },
+        onAggiungiWatchlist = { }
     )
 }

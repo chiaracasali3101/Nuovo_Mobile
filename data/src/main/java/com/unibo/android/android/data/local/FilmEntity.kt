@@ -6,13 +6,13 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "watchlist")
 data class FilmEntity(
     @PrimaryKey val id: Int,
-    val titolo: String,
-    val anno: String,
-    val trama: String,
-    val genere: String,
-    val durata: String,
-    val regista: String,
-    val punteggio: Double,
-    val percorsoLocandina: String,
+    val titolo: String?,
+    val anno: String?,
+    val trama: String?,
+    val genere: String?,
+    val durata: String?,
+    val regista: String?,
+    val punteggio: Double?,
+    val percorsoLocandina: String?,
     val preferito: Boolean = false
 )

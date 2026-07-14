@@ -87,7 +87,7 @@ class FilmRepositoryImpl(
                 entity.toDomain()
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            android.util.Log.e("CercaFilmOnline", "Errore ricerca", e)
             emptyList()
         }
     }
@@ -115,10 +115,28 @@ class FilmRepositoryImpl(
             e.printStackTrace()
         }
     }
+
+    override suspend fun addWatchlist(film: Film) {
+        filmDao.addWatchlist(
+            FilmEntity(
+                id = film.id,
+                titolo = film.titolo,
+                anno = film.anno,
+                trama = film.trama,
+                genere = film.genere,
+                durata = film.durata,
+                regista = film.regista,
+                punteggio = film.punteggio,
+                percorsoLocandina = film.percorsoLocandina,
+                preferito = true
+            )
+        )
+    }
 }
 
 fun FilmEntity.toDomain(): Film {
     return Film(
+        id = this.id,
         titolo = this.titolo,
         anno = this.anno,
         trama = this.trama,
