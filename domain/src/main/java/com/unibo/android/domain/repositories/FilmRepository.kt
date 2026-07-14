@@ -1,7 +1,6 @@
 package com.unibo.android.domain.repositories
 
 import kotlinx.coroutines.flow.Flow
-import com.unibo.android.domain.Film
 
 
 interface FilmRepository {
