@@ -40,13 +40,14 @@ val LightMutedCream = Color(0xFFD1B08C)
 @Composable
 fun Ricerca(
     query: String,
-    listaFilm: List<Film>,
-    onQueryChange: (String) -> Unit,
-    onMovieClick: (Film) -> Unit
+    listaFilm: List<Film>, //risultati
+    onQueryChange: (String) -> Unit, //callback
+    onMovieClick: (Film) -> Unit //callback
 ) {
     Scaffold(
         containerColor = DeepMaroon,
         topBar = {
+            //barra di ricerca
             Surface(
                 color = DeepMaroon,
                 modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars)
@@ -96,6 +97,7 @@ fun Ricerca(
         }
     ) { paddingValues ->
         if (listaFilm.isEmpty()) {
+            //nessun risultato
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -109,6 +111,7 @@ fun Ricerca(
                 )
             }
         } else {
+            //lista scrollabile dei risultati
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -117,7 +120,6 @@ fun Ricerca(
             ) {
                 items(listaFilm) { film ->
                     Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
-                       // Text(text = film.titolo ?: "Film senza titolo", color = WarmCream)
                         FilmCard(
                             film = film,
                             onClick = { onMovieClick(film) }

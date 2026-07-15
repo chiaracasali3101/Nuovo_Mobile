@@ -10,13 +10,14 @@ import com.unibo.android.domain.repositories.MovieRepository
 
 object RepositoryProviderImpl {
 
-    fun getMovieRepository(context: Context, apiKey: String): MovieRepository {
+   fun getMovieRepository(context: Context, apiKey: String): MovieRepository {
         val database = FilmDatabase.getDatabase(context)
 
         return FilmRepositoryImpl(
             filmDao = database.filmDao(),
-            apiService = RetrofitClient.tmdbApi as FilmApiService,
+            apiService = RetrofitClient.tmdbApi,
             apiKey = apiKey
+
         )
     }
 }

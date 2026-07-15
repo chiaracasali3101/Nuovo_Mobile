@@ -1,17 +1,18 @@
 package com.unibo.android.domain.usecases
 
 import com.unibo.android.domain.models.Film
-import com.unibo.android.domain.repositories.MovieRepository
+import com.unibo.android.domain.repositories.FilmRepository
 
 class UseCasesRicerca(
-    private val repository: MovieRepository
+    private val repository: FilmRepository
 ) {
 
-    suspend operator fun invoke(query: String): List<Film> {
-        return repository.getFilmsByQuery(query)
+    suspend operator fun invoke(query: String, tmdbApiKey: String): List<Film> {
+        return if (query.isBlank()) {
+            repository.getPopularMovies()
+        } else {
+            repository.cercaFilmOnline(apiKey = tmdbApiKey, query = query)
+        }
     }
 
-    fun execute(query: String) {}
-
 }
-

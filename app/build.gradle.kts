@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.unibo.android.corsolp2526"
+    namespace = "com.unibo.android.nuovo_prog_mobile"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.unibo.android.corsolp2526"
+        applicationId = "com.unibo.android.nuovo_prog_mobile"
         minSdk = 31
         targetSdk = 36
         versionCode = 1
