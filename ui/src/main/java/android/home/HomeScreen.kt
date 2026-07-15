@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.unibo.android.ui.R
 import android.components.ReViewBottomBar
+import androidx.navigation.NavGraphBuilder
 
 data class Curiosita(
     val titolo: String,
@@ -60,25 +61,27 @@ fun HomeScreen(onNavigateToMap: () -> Unit) {
         )
     )
 
-    androidx.compose.material3.Scaffold(
-        modifier = androidx.compose.ui.Modifier.fillMaxSize(),
-        bottomBar = {
-            ReViewBottomBar(
-                selectedItem = 0,
-                onItemSelected = { indice: Int ->
-                    if (indice == 3) onNavigateToMap()
-                }
-            )
+    @Composable
+    fun HomeScreen(navController: androidx.navigation.NavController){
+        Scaffold(
+            bottomBar = {
+                ReViewBottomBar(
+                    selectedItem = 0,
+                    onItemSelected = { indice ->
+                        when (indice) {
+                            3 -> navController.navigate("profilo")
+                            4 -> navController.navigate("login") { popUpTo(0) { inclusive = true } }
+                        }
+                    }
+                )
+            }
+        ) { paddingValori ->
+            // Assicurati che HomeContent sia definita, altrimenti metti un Box vuoto qui per test
+            Box(modifier = Modifier.padding(paddingValori)) {
+                Text("Home Caricata")
+            }
         }
-    ) { paddingValori ->
-        // Rimosso il Box, passiamo il padding direttamente alla funzione
-        HomeContent(
-            listaCuriosita = listaCuriosita,
-            paddingEsterno = paddingValori
-        )
     }
-}
-
     @Composable
     fun HomeContent(listaCuriosita: List<Curiosita>, paddingEsterno: PaddingValues) {
         val backgroundColor = Color(0xFF3B0000)
@@ -245,8 +248,11 @@ fun CuriositaRow(curiosita: Curiosita, immagineASinistra: Boolean) {
     }
 }
 
-@Preview(showBackground = true, widthDp = 1024, heightDp = 3500)
-@Composable
-fun HomeScreenPreview() {
-    HomeScreen(onNavigateToMap = {})
-}
+    @Preview(showBackground = true, widthDp = 400, heightDp = 800)
+    @Composable
+    fun HomeScreenPreview() {
+        // Ricordati di importare rememberNavController
+        val dummyNavController = rememberNavController()
+
+        HomeScreen(navController = dummyNavController)
+    }

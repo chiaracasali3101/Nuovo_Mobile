@@ -10,14 +10,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import android.home.HomeScreen
+import android.screens.ProfileScreen
 
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 
 import com.unibo.android.ui.screens.LoginScreen
-// Ricordati di importare la tua Home quando l'avrai creata
-// import com.unibo.android.corsolp2526.screens.HomeScreen
+import android.screens.RegisterScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,39 +33,39 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
 
                     NavHost(navController = navController, startDestination = "login") {
-
-                        // --- 1. SCHERMATA DI LOGIN ---
                         composable("login") {
                             LoginScreen(
                                 onLoginSuccess = {
-                                    // Adesso ACCEDI ti porta alla Home!
-                                    navController.navigate("home") {
-                                        // TRUCCO PRO: Cancella il login dalla cronologia.
-                                        // Così, se l'utente preme "Indietro" dalla Home, l'app si chiude
-                                        // invece di tornare stranamente alla schermata di login.
-                                        popUpTo("login") { inclusive = true }
-                                    }
+                                    navController.navigate("home") { popUpTo("login") { inclusive = true } }
                                 },
                                 onNavigateToRegister = {
-                                    println("Hai cliccato REGISTRATI!")
+                                    navController.navigate("registrazione")
                                 }
                             )
                         }
 
-                        // --- 2. SCHERMATA PRINCIPALE (con Navbar) ---
+                        composable("registrazione") {
+                            RegisterScreen(
+                                onRegisterSuccess = {
+                                    navController.navigate("home") { popUpTo("login") { inclusive = true } }
+                                },
+                                onNavigateToLogin = {
+                                    navController.popBackStack()
+                                }
+                            )
+                        }
+
                         composable("home") {
-                            HomeScreen(
-                                onNavigateToMap = {
-                                    navController.navigate("mappa")
-                                }
-                            )
+                            // Qui devi passare ESATTAMENTE ciò che la funzione si aspetta
+                            HomeScreen(navController = navController)
                         }
 
-                        // --- 3. LA MAPPA ---
-                        // Rimane registrata qui nel navigatore globale.
-                        // Quando sarai nel Profilo, ti basterà fare navController.navigate("mappa")
                         composable("mappa") {
                             MapScreen()
+                        }
+
+                        composable("profilo") {
+                            ProfileScreen()
                         }
                     }
                 }
