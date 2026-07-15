@@ -11,11 +11,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import android.home.HomeScreen
 import android.screens.ProfileScreen
-
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-
 import com.unibo.android.ui.screens.LoginScreen
 import android.screens.RegisterScreen
 
@@ -56,7 +54,6 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("home") {
-                            // Qui devi passare ESATTAMENTE ciò che la funzione si aspetta
                             HomeScreen(navController = navController)
                         }
 

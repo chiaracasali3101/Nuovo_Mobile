@@ -23,7 +23,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.unibo.android.ui.R
 import android.components.ReViewBottomBar
-import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+
 
 data class Curiosita(
     val titolo: String,
@@ -32,7 +34,7 @@ data class Curiosita(
 )
 
 @Composable
-fun HomeScreen(onNavigateToMap: () -> Unit) {
+fun HomeScreen(navController: NavController) {
     val listaCuriosita = listOf(
         Curiosita(
             titolo = "1) CHI HA INVENTATO IL CINEMA?",
@@ -61,198 +63,76 @@ fun HomeScreen(onNavigateToMap: () -> Unit) {
         )
     )
 
-    @Composable
-    fun HomeScreen(navController: androidx.navigation.NavController){
-        Scaffold(
-            bottomBar = {
-                ReViewBottomBar(
-                    selectedItem = 0,
-                    onItemSelected = { indice ->
-                        when (indice) {
-                            3 -> navController.navigate("profilo")
-                            4 -> navController.navigate("login") { popUpTo(0) { inclusive = true } }
-                        }
+    Scaffold(
+        bottomBar = {
+            ReViewBottomBar(
+                selectedItem = 0,
+                onItemSelected = { indice ->
+                    when (indice) {
+                        3 -> navController.navigate("profilo")
+                        4 -> navController.navigate("login") { popUpTo(0) { inclusive = true } }
                     }
-                )
-            }
-        ) { paddingValori ->
-            // Assicurati che HomeContent sia definita, altrimenti metti un Box vuoto qui per test
-            Box(modifier = Modifier.padding(paddingValori)) {
-                Text("Home Caricata")
-            }
+                }
+            )
         }
+    ) { paddingValori ->
+        HomeContent(listaCuriosita = listaCuriosita, paddingEsterno = paddingValori)
     }
-    @Composable
-    fun HomeContent(listaCuriosita: List<Curiosita>, paddingEsterno: PaddingValues) {
-        val backgroundColor = Color(0xFF3B0000)
+}
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(backgroundColor),
-            contentPadding = paddingEsterno
-        ) {
-
+@Composable
+fun HomeContent(listaCuriosita: List<Curiosita>, paddingEsterno: PaddingValues) {
+    val backgroundColor = Color(0xFF3B0000)
+    LazyColumn(
+        modifier = Modifier.fillMaxSize().background(backgroundColor),
+        contentPadding = paddingEsterno
+    ) {
         item {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(600.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.sfondo_home),
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(Color.Transparent, backgroundColor),
-                                startY = 350f
-                            )
-                        )
-                )
-
-                Column(
-                    modifier = Modifier.fillMaxSize().padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = "WELCOME TO",
-                        color = Color.White,
-                        fontSize = 13.sp,
-                        letterSpacing = 6.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    Text(
-                        text = "reView",
-                        color = Color.White,
-                        fontSize = 86.sp,
-                        fontFamily = FontFamily.Serif
-                    )
-
-                    Text(
-                        text = "dai voce alla tua visione,\nesplora quella degli altri.",
-                        color = Color.White,
-                        fontSize = 24.sp,
-                        fontFamily = FontFamily.Serif,
-                        textAlign = TextAlign.Center
-                    )
-
+            Box(modifier = Modifier.fillMaxWidth().height(600.dp)) {
+                Image(painter = painterResource(id = R.drawable.sfondo_home), contentDescription = null, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
+                Box(modifier = Modifier.fillMaxSize().background(Brush.verticalGradient(colors = listOf(Color.Transparent, backgroundColor), startY = 350f)))
+                Column(modifier = Modifier.fillMaxSize().padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+                    Text(text = "WELCOME TO", color = Color.White, fontSize = 13.sp, letterSpacing = 6.sp, fontWeight = FontWeight.Bold)
+                    Text(text = "reView", color = Color.White, fontSize = 86.sp, fontFamily = FontFamily.Serif)
+                    Text(text = "dai voce alla tua visione,\nesplora quella degli altri.", color = Color.White, fontSize = 24.sp, fontFamily = FontFamily.Serif, textAlign = TextAlign.Center)
                     Spacer(modifier = Modifier.height(40.dp))
-
-                    Icon(
-                        imageVector = Icons.Default.KeyboardArrowDown,
-                        contentDescription = "Scorri verso il basso",
-                        tint = Color.White,
-                        modifier = Modifier.size(48.dp)
-                    )
+                    Icon(imageVector = Icons.Default.KeyboardArrowDown, contentDescription = "Scorri", tint = Color.White, modifier = Modifier.size(48.dp))
                 }
             }
         }
-
         item {
-            Text(
-                text = "Curiosità sul cinema...",
-                color = Color.White,
-                fontSize = 57.sp,
-                fontFamily = FontFamily.Serif,
-                textAlign = TextAlign.Center,
-                lineHeight = 62.sp,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 50.dp, horizontal = 16.dp)
-            )
+            Text(text = "Curiosità sul cinema...", color = Color.White, fontSize = 57.sp, fontFamily = FontFamily.Serif, textAlign = TextAlign.Center, lineHeight = 62.sp, modifier = Modifier.fillMaxWidth().padding(vertical = 50.dp, horizontal = 16.dp))
         }
-
         itemsIndexed(listaCuriosita) { index, curiosita ->
-            CuriositaRow(
-                curiosita = curiosita,
-                immagineASinistra = index % 2 == 0
-            )
+            CuriositaRow(curiosita = curiosita, immagineASinistra = index % 2 == 0)
         }
-
         item { Spacer(modifier = Modifier.height(80.dp)) }
     }
 }
 
 @Composable
 fun CuriositaRow(curiosita: Curiosita, immagineASinistra: Boolean) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 40.dp, vertical = 16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 40.dp, vertical = 16.dp), verticalAlignment = Alignment.CenterVertically) {
         if (immagineASinistra) {
-            Image(
-                painter = painterResource(id = curiosita.immagine),
-                contentDescription = null,
-                modifier = Modifier
-                    .weight(1f)
-                    .height(350.dp),
-                contentScale = ContentScale.Fit
-            )
+            Image(painter = painterResource(id = curiosita.immagine), contentDescription = null, modifier = Modifier.weight(1f).height(350.dp), contentScale = ContentScale.Fit)
             Spacer(modifier = Modifier.width(40.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = curiosita.titolo,
-                    color = Color.White,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.Serif
-                )
-                Text(
-                    text = curiosita.testo,
-                    color = Color(0xFFE0E0E0),
-                    fontSize = 17.sp,
-                    fontFamily = FontFamily.Serif,
-                    lineHeight = 26.sp,
-                    modifier = Modifier.padding(top = 12.dp)
-                )
+                Text(text = curiosita.titolo, color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Serif)
+                Text(text = curiosita.testo, color = Color(0xFFE0E0E0), fontSize = 17.sp, fontFamily = FontFamily.Serif, lineHeight = 26.sp, modifier = Modifier.padding(top = 12.dp))
             }
         } else {
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = curiosita.titolo,
-                    color = Color.White,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.Serif
-                )
-                Text(
-                    text = curiosita.testo,
-                    color = Color(0xFFE0E0E0),
-                    fontSize = 17.sp,
-                    fontFamily = FontFamily.Serif,
-                    lineHeight = 26.sp,
-                    modifier = Modifier.padding(top = 12.dp)
-                )
+                Text(text = curiosita.titolo, color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Serif)
+                Text(text = curiosita.testo, color = Color(0xFFE0E0E0), fontSize = 17.sp, fontFamily = FontFamily.Serif, lineHeight = 26.sp, modifier = Modifier.padding(top = 12.dp))
             }
             Spacer(modifier = Modifier.width(40.dp))
-            Image(
-                painter = painterResource(id = curiosita.immagine),
-                contentDescription = null,
-                modifier = Modifier
-                    .weight(1f)
-                    .height(350.dp),
-                contentScale = ContentScale.Fit
-            )
+            Image(painter = painterResource(id = curiosita.immagine), contentDescription = null, modifier = Modifier.weight(1f).height(350.dp), contentScale = ContentScale.Fit)
         }
     }
 }
 
-    @Preview(showBackground = true, widthDp = 400, heightDp = 800)
-    @Composable
-    fun HomeScreenPreview() {
-        // Ricordati di importare rememberNavController
-        val dummyNavController = rememberNavController()
-
-        HomeScreen(navController = dummyNavController)
-    }
+@Preview(showBackground = true, widthDp = 400, heightDp = 800)
+@Composable
+fun HomeScreenPreview() {
+    HomeScreen(navController = rememberNavController())
+}
