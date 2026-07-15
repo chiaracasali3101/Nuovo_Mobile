@@ -1,4 +1,4 @@
-package com.unibo.android.corsolp2526
+package com.unibo.android.nuovo_prog_mobile
 
 import android.os.Bundle
 import android.screens.MapScreen
@@ -19,7 +19,6 @@ import android.presentation.Ricerca
 import android.presentation.DettaglioFilm
 import com.unibo.android.domain.di.UseCasesProvider
 import com.unibo.android.domain.models.Film
-import com.unibo.android.nuovo_prog_mobile.BuildConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -42,39 +41,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    var query by remember { mutableStateOf("") }
-                    var listaFilm by remember { mutableStateOf(emptyList<Film>()) }
-                    var filmSelezionato by remember { mutableStateOf<Film?>(null) }
-                    val scope = rememberCoroutineScope()
-
-                    LaunchedEffect(query) {
-                        listaFilm = withContext(Dispatchers.IO) {
-                            UseCasesProvider.useCasesRicerca(query, BuildConfig.TMDB_API_KEY)
-                        }
-                    }
-
-                    if (filmSelezionato == null) {
-                        Ricerca(
-                            query = query,
-                            listaFilm = listaFilm,
-                            onQueryChange = { nuovoTesto -> query = nuovoTesto },
-                            onMovieClick = { film -> filmSelezionato = film }
-                        )
-                    } else {
-                        DettaglioFilm(
-                            film = filmSelezionato!!,
-                            onBack = { filmSelezionato = null },
-                            onInviaRecensione = { },
-                            onAggiungiWatchlist = {
-                                scope.launch(Dispatchers.IO) {
-                                    UseCasesProvider.useCasesWatchlist(filmSelezionato!!)
-                                }
-                            }
-                        )
-                    }
                     val navController = rememberNavController()
 
+                    // Il NavHost gestisce TUTTE le schermate
                     NavHost(navController = navController, startDestination = "login") {
+
                         composable("login") {
                             LoginScreen(
                                 onLoginSuccess = {
@@ -106,7 +77,43 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("profilo") {
-                            ProfileScreen()
+                            ProfileScreen(navController = navController)
+                        }
+
+                        // ECCO LA TUA NUOVA ROTTA DI RICERCA!
+                        composable("ricerca") {
+                            // Le variabili di stato vivono solo finché sei in questa schermata
+                            var query by remember { mutableStateOf("") }
+                            var listaFilm by remember { mutableStateOf(emptyList<Film>()) }
+                            var filmSelezionato by remember { mutableStateOf<Film?>(null) }
+                            val scope = rememberCoroutineScope()
+
+                            LaunchedEffect(query) {
+                                listaFilm = withContext(Dispatchers.IO) {
+                                    UseCasesProvider.useCasesRicerca(query, BuildConfig.TMDB_API_KEY)
+                                }
+                            }
+
+                            // La tua logica originale, ora protetta dentro la rotta
+                            if (filmSelezionato == null) {
+                                Ricerca(
+                                    query = query,
+                                    listaFilm = listaFilm,
+                                    onQueryChange = { nuovoTesto -> query = nuovoTesto },
+                                    onMovieClick = { film -> filmSelezionato = film }
+                                )
+                            } else {
+                                DettaglioFilm(
+                                    film = filmSelezionato!!,
+                                    onBack = { filmSelezionato = null },
+                                    onInviaRecensione = { },
+                                    onAggiungiWatchlist = {
+                                        scope.launch(Dispatchers.IO) {
+                                            UseCasesProvider.useCasesWatchlist(filmSelezionato!!)
+                                        }
+                                    }
+                                )
+                            }
                         }
                     }
                 }
