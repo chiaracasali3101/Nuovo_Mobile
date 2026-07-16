@@ -60,7 +60,11 @@ class MainActivity : ComponentActivity() {
                         composable("login") {
                             LoginScreen(
                                 onLoginSuccess = {
-                                    navController.navigate("home") { popUpTo("login") { inclusive = true } }
+                                    navController.navigate("home") {
+                                        popUpTo("login") {
+                                            inclusive = true
+                                        }
+                                    }
                                 },
                                 onNavigateToRegister = {
                                     navController.navigate("registrazione")
@@ -71,7 +75,11 @@ class MainActivity : ComponentActivity() {
                         composable("registrazione") {
                             RegisterScreen(
                                 onRegisterSuccess = {
-                                    navController.navigate("home") { popUpTo("login") { inclusive = true } }
+                                    navController.navigate("home") {
+                                        popUpTo("login") {
+                                            inclusive = true
+                                        }
+                                    }
                                 },
                                 onNavigateToLogin = {
                                     navController.popBackStack()
@@ -99,7 +107,6 @@ class MainActivity : ComponentActivity() {
 
                             ClassificaScreen(viewModel = classificaViewModel)
                         }
-
                         composable("ricerca") {
                             var query by remember { mutableStateOf("") }
                             var listaFilm by remember { mutableStateOf(emptyList<Film>()) }
@@ -114,7 +121,10 @@ class MainActivity : ComponentActivity() {
                                 // Aspetta mezzo secondo prima di fare la ricerca per non sovraccaricare l'API mentre digiti
                                 delay(500)
                                 listaFilm = withContext(Dispatchers.IO) {
-                                    UseCasesProvider.useCasesRicerca(query, tmdbApiKey = TMDB_API_KEY)
+                                    UseCasesProvider.useCasesRicerca(
+                                        query,
+                                        tmdbApiKey = TMDB_API_KEY
+                                    )
                                 }
                             }
 
@@ -126,26 +136,38 @@ class MainActivity : ComponentActivity() {
                                     onMovieClick = { film -> filmSelezionato = film }
                                 )
                             } else {
-                                // Qui passiamo tutti i parametri richiesti, inclusi onPreferito e onVisto!
+                                // Salviamo direttamente nel DB chiamando gli UseCases tramite scope.launch!
                                 DettaglioFilm(
-                                    film = filmSelezionato!!,
+                                    film = filmSelezionato,
                                     onBack = { filmSelezionato = null },
                                     onInviaRecensione = { /* Logica per la recensione */ },
                                     onAggiungiWatchlist = {
-                                        dettaglioViewModel.aggiungiAllaWatchlist(filmSelezionato!!)
+                                        scope.launch {
+                                            filmSelezionato?.let { film ->
+                                                UseCasesProvider.useCasesWatchlist.invoke(film)
+                                            }
+                                        }
                                     },
                                     onPreferito = { nuovoValore ->
-                                        dettaglioViewModel.preferito(filmSelezionato!!, nuovoValore)
+                                        scope.launch {
+                                            filmSelezionato?.let { film ->
+                                                UseCasesProvider.useCasesPreferito.invoke(film, nuovoValore)
+                                            }
+                                        }
                                     },
                                     onVisto = { nuovoValore ->
-                                        dettaglioViewModel.impostaVisto(filmSelezionato!!, nuovoValore)
+                                        scope.launch {
+                                            filmSelezionato?.let { film ->
+                                                UseCasesProvider.useCasesVisto.invoke(film, nuovoValore)
+                                            }
+                                        }
                                     }
                                 )
                             }
                         }
-                    }
-                }
-            }
-        }
-    }
-}
+                    } // 1. Chiude NavHost
+                } // 2. Chiude Surface
+            } // 3. Chiude MaterialTheme
+        } // 4. Chiude setContent
+    } // 5. Chiude onCreate
+} // 6. Chiude MainActivity

@@ -8,4 +8,6 @@ class UseCasesVisto(private val repository: FilmRepository) {
     suspend operator fun invoke(film: Film, visto: Boolean) {
         repository.impostaVisto(film, visto)
     }
+
+    fun impostaVisto(it: com.unibo.android.domain.models.Film, nuovoValore: Boolean) {}
 }
