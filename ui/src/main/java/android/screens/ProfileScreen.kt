@@ -46,7 +46,7 @@ fun ProfileScreen(navController: androidx.navigation.NavController) {
     val listaWatchlist = listOf("Dune: Part Two", "Oppenheimer", "The Batman", "Blade Runner 2049", "Gladiator 2")
 
     Scaffold(
-        bottomBar = { ReViewBottomBar() },
+        bottomBar = { ReViewBottomBar(navController = navController) },
         containerColor = Color.Transparent
     ) { innerPadding ->
 

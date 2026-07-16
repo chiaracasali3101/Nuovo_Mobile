@@ -73,7 +73,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("mappa") {
-                            MapScreen()
+                            MapScreen(navController = navController)
                         }
 
                         composable("profilo") {

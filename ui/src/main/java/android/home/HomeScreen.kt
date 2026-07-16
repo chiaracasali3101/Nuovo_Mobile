@@ -65,15 +65,7 @@ fun HomeScreen(navController: NavController) {
 
     Scaffold(
         bottomBar = {
-            ReViewBottomBar(
-                selectedItem = 0,
-                onItemSelected = { indice ->
-                    when (indice) {
-                        3 -> navController.navigate("profilo")
-                        4 -> navController.navigate("login") { popUpTo(0) { inclusive = true } }
-                    }
-                }
-            )
+            ReViewBottomBar(navController = navController)
         }
     ) { paddingValori ->
         HomeContent(listaCuriosita = listaCuriosita, paddingEsterno = paddingValori)
