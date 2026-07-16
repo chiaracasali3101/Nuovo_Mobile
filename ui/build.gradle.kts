@@ -44,6 +44,8 @@ android {
 
 dependencies {
     implementation(project(":domain"))
+    implementation(libs.androidx.navigation.runtime.ktx)
+    implementation(libs.androidx.navigation.compose)
 
     val composeBom = platform("androidx.compose:compose-bom:2024.04.01")
     implementation(composeBom)

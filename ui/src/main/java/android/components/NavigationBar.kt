@@ -13,6 +13,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,37 +22,50 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.*
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 
-data class NavItem(val label: String, val icon: ImageVector)
+data class NavItem(val label: String, val icon: ImageVector, val route: String)
 
 @Composable
-fun ReViewBottomBar(
-    selectedItem: Int = 0, // Aggiungendo "= 0" diventa facoltativo
-    onItemSelected: (Int) -> Unit = {} // Aggiungendo "= {}" diventa facoltativo
-) {
+fun ReViewBottomBar(navController: NavController) {
+
     val navItems = listOf(
-        NavItem("Home", Icons.Default.Home),
-        NavItem("Cerca", Icons.Default.Search),
-        NavItem("Classifica", Icons.Default.Star),
-        NavItem("Profilo", Icons.Default.Person),
-        NavItem("Login", Icons.Default.Lock)
+        NavItem("Home", Icons.Default.Home, "home"),
+        NavItem("Cerca", Icons.Default.Search, "ricerca"),
+        NavItem("Classifica", Icons.Default.Star, "classifica"),
+        NavItem("Profilo", Icons.Default.Person, "profilo"),
+        NavItem("Login", Icons.Default.Lock, "login")
     )
 
     val sfondoNavBar = Color(0xFF5A0000)
     val coloreOro = Color(0xFFFECE79)
     val coloreInattivo = Color.White.copy(alpha = 0.6f)
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
 
     NavigationBar(
         containerColor = sfondoNavBar,
         contentColor = coloreOro,
         modifier = Modifier.height(85.dp)
     ) {
-        navItems.forEachIndexed { index, item ->
-            val isSearch = item.label == "Cerca"
-
+        navItems.forEach { item ->
             NavigationBarItem(
-                selected = selectedItem == index, // Parametro 'selected'
-                onClick = { onItemSelected(index) }, // Parametro 'onClick'
+                selected = currentRoute == item.route,
+                onClick = {
+                    if (currentRoute != item.route) {
+                        try {
+                            navController.navigate(item.route) {
+                                popUpTo(navController.graph.startDestinationId) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        } catch (e: Exception) {
+                            println("Rotta non trovata: ${item.route}")
+                        }
+                    }
+                },
                 icon = {
                     Icon(imageVector = item.icon, contentDescription = item.label)
                 },
@@ -79,9 +93,6 @@ fun ReViewBottomBar(
 @Composable
 fun ReViewBottomBarPreview() {
     MaterialTheme {
-        ReViewBottomBar(
-            selectedItem = 0,
-            onItemSelected = { }
-        )
+        ReViewBottomBar(navController = rememberNavController())
     }
 }

@@ -23,6 +23,13 @@ import com.unibo.android.domain.models.Film
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import android.home.HomeScreen
+import android.screens.ProfileScreen
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.unibo.android.ui.screens.LoginScreen
+import android.screens.RegisterScreen
 
 private const val TMDB_API_KEY = "f68e046df68555567f96d4cdfcc3ffdf"
 
@@ -43,6 +50,52 @@ class MainActivity : ComponentActivity() {
                     var filmSelezionato by remember { mutableStateOf<Film?>(null) }
                     val scope = rememberCoroutineScope()
                     val dettaglioViewModel: DettaglioViewModel = viewModel()
+                    val navController = rememberNavController()
+
+                    // Il NavHost gestisce TUTTE le schermate
+                    NavHost(navController = navController, startDestination = "login") {
+
+                        composable("login") {
+                            LoginScreen(
+                                onLoginSuccess = {
+                                    navController.navigate("home") { popUpTo("login") { inclusive = true } }
+                                },
+                                onNavigateToRegister = {
+                                    navController.navigate("registrazione")
+                                }
+                            )
+                        }
+
+                        composable("registrazione") {
+                            RegisterScreen(
+                                onRegisterSuccess = {
+                                    navController.navigate("home") { popUpTo("login") { inclusive = true } }
+                                },
+                                onNavigateToLogin = {
+                                    navController.popBackStack()
+                                }
+                            )
+                        }
+
+                        composable("home") {
+                            HomeScreen(navController = navController)
+                        }
+
+                        composable("mappa") {
+                            MapScreen(navController = navController)
+                        }
+
+                        composable("profilo") {
+                            ProfileScreen(navController = navController)
+                        }
+
+                        // ECCO LA TUA NUOVA ROTTA DI RICERCA!
+                        composable("ricerca") {
+                            // Le variabili di stato vivono solo finché sei in questa schermata
+                            var query by remember { mutableStateOf("") }
+                            var listaFilm by remember { mutableStateOf(emptyList<Film>()) }
+                            var filmSelezionato by remember { mutableStateOf<Film?>(null) }
+                            val scope = rememberCoroutineScope()
 
                     LaunchedEffect(query) {
                         if (query.isBlank()) {

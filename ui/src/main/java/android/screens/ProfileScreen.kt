@@ -32,7 +32,7 @@ import androidx.compose.ui.res.vectorResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(navController: androidx.navigation.NavController) {
     val sfondoMarrone = Color(0xFF210100)
     val coloreCrema = Color(0xFFFECE79)
     val coloreOro = Color(0xFFE6A341)
@@ -46,7 +46,7 @@ fun ProfileScreen() {
     val listaWatchlist = listOf("Dune: Part Two", "Oppenheimer", "The Batman", "Blade Runner 2049", "Gladiator 2")
 
     Scaffold(
-        bottomBar = { ReViewBottomBar() },
+        bottomBar = { ReViewBottomBar(navController = navController) },
         containerColor = Color.Transparent
     ) { innerPadding ->
 
@@ -142,7 +142,9 @@ fun ProfileScreen() {
                 Spacer(modifier = Modifier.height(25.dp))
 
                 Button(
-                    onClick = { },
+                    onClick = {
+                        navController.navigate("mappa") // <--- Questa è la riga fondamentale!
+                    },
                     modifier = Modifier.fillMaxWidth(0.9f).height(50.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = coloreRossoBottoni),
                     shape = RoundedCornerShape(10.dp)
@@ -216,5 +218,6 @@ fun MovieItem(title: String, subtitle: String, icon: ImageVector, iconColor: Col
 @Preview(showBackground = true, widthDp = 400, heightDp = 1200)
 @Composable
 fun ProfilePreview() {
-    ProfileScreen()
+    val mockNavController = androidx.navigation.compose.rememberNavController()
+    ProfileScreen(navController = mockNavController)
 }

@@ -22,16 +22,17 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import com.unibo.android.ui.R
 import android.components.ReViewBottomBar
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun MapScreen() {
+fun MapScreen(navController: NavController) {
     val isPreview = LocalInspectionMode.current
 
-        Scaffold(
-            bottomBar = { ReViewBottomBar() }
-        ) { innerPadding ->
-
-    if (isPreview) {
+    Scaffold(
+        bottomBar = { ReViewBottomBar(navController = navController) }
+    ) { innerPadding ->
+        if (isPreview) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -159,5 +160,5 @@ object CinemaMockData {
 @androidx.compose.ui.tooling.preview.Preview(showBackground = true)
 @Composable
 fun MapScreenPreview() {
-    MapScreen()
+    MapScreen(navController = rememberNavController())
 }
