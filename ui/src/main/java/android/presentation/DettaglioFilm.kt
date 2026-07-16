@@ -16,6 +16,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -52,13 +54,17 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DettaglioFilm(
-    film: Film,
+    film: Film?,
     onBack: () -> Unit,
     onInviaRecensione: (String) -> Unit,
-    onAggiungiWatchlist: () -> Unit
+    onAggiungiWatchlist: () -> Unit,
+    onPreferito: (Boolean) -> Unit,
+    onVisto: (Boolean) -> Unit
 ) {
     var testoRecensione by remember { mutableStateOf("") }
     val recensioni = remember { mutableStateListOf<String>() }
+    var isPreferito by remember { mutableStateOf(film?.preferito ?: false) }
+    var isVisto by remember(film) { mutableStateOf(film?.visto ?: false) }
 
     Scaffold(
         containerColor = DeepMaroon,
@@ -92,7 +98,7 @@ fun DettaglioFilm(
                 .verticalScroll(rememberScrollState())
         ) {
             AsyncImage(
-                model = "https://image.tmdb.org/t/p/w500${film.percorsoLocandina}",
+                model = "https://image.tmdb.org/t/p/w500${film?.percorsoLocandina}",
                 contentDescription = null,
                 placeholder = painterResource(id = android.R.drawable.ic_menu_gallery),
                 modifier = Modifier
@@ -103,13 +109,26 @@ fun DettaglioFilm(
                 contentScale = ContentScale.Crop
             )
             Column(modifier = Modifier.padding(16.dp)) {
-                // titolo
-                film.titolo?.let {
-                    Text(
-                        text = it,
-                        style = MaterialTheme.typography.headlineMedium,
-                        color = WarmCream
-                    )
+                // titolo + cuore preferito
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    film?.titolo?.let {
+                        Text(
+                            text = it,
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = WarmCream,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                    IconButton(onClick = {
+                        isPreferito = !isPreferito
+                        onPreferito(isPreferito)
+                    }) {
+                        Icon(
+                            imageVector = if (isPreferito) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                            contentDescription = "Preferito",
+                            tint = BoldRed
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -124,21 +143,36 @@ fun DettaglioFilm(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "${film.punteggio} / 10",
+                        text = "${film?.punteggio} / 10",
                         color = WarmCream,
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(text = "•", color = LightMutedCream)
                     Spacer(modifier = Modifier.width(12.dp))
-                    film.anno?.let { Text(text = it, color = LightMutedCream) }
+                    film?.anno?.let { Text(text = it, color = LightMutedCream) }
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(text = "•", color = LightMutedCream)
                     Spacer(modifier = Modifier.width(12.dp))
-                    film.durata?.let { Text(text = it, color = LightMutedCream) }
+                    film?.durata?.let { Text(text = it, color = LightMutedCream) }
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
+
+                Button(
+                    onClick = {
+                        val nuovoStatoVisto = !isVisto
+                        isVisto = nuovoStatoVisto
+                        onVisto(nuovoStatoVisto)
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (isVisto) BoldRed else LightMutedCream.copy(alpha = 0.2f),
+                        contentColor = WarmCream
+                    ),
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                ) {
+                    Text(if (isVisto) "✓ SEGNATO COME VISTO" + "" else "SEGNA COME VISTO")
+                }
 
                 // trama
                 Text(
@@ -149,7 +183,7 @@ fun DettaglioFilm(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                film.trama?.let {
+                film?.trama?.let {
                     Text(
                         text = it,
                         style = MaterialTheme.typography.bodyLarge,
@@ -273,6 +307,8 @@ fun DettaglioFilmPreview() {
         ),
         onBack = { },
         onInviaRecensione = { },
-        onAggiungiWatchlist = { }
+        onAggiungiWatchlist = { },
+        onPreferito = { },
+        onVisto = { }
     )
 }
