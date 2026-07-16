@@ -1,10 +1,16 @@
 package android.screens
 
+import android.Manifest
 import android.content.Context
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -12,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -28,6 +35,20 @@ import androidx.navigation.compose.rememberNavController
 @Composable
 fun MapScreen(navController: NavController) {
     val isPreview = LocalInspectionMode.current
+    val context = LocalContext.current
+    val locationPermissionRequest = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val fineLocationGranted = permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false)
+        val coarseLocationGranted = permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false)
+
+        if (fineLocationGranted || coarseLocationGranted) {
+            Toast.makeText(context, "Posizione attivata! Cerco i cinema...", Toast.LENGTH_SHORT).show()
+            // TODO: In futuro qui aggiungeremo la logica per centrare la mappa sulla posizione dell'utente
+        } else {
+            Toast.makeText(context, "Permesso negato. Impossibile trovare i cinema vicini.", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     Scaffold(
         bottomBar = { ReViewBottomBar(navController = navController) }
@@ -53,58 +74,83 @@ fun MapScreen(navController: NavController) {
                 }
             }
         } else {
-            AndroidView(
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding),
-                factory = { context ->
-                    Configuration.getInstance().load(context, context.getSharedPreferences("osmdroid", Context.MODE_PRIVATE))
-                    Configuration.getInstance().userAgentValue = context.packageName
+                    .padding(innerPadding)
+            ) {
+                AndroidView(
+                    modifier = Modifier.fillMaxSize(),
+                    factory = { ctx ->
+                        Configuration.getInstance().load(ctx, ctx.getSharedPreferences("osmdroid", Context.MODE_PRIVATE))
+                        Configuration.getInstance().userAgentValue = ctx.packageName
 
-                    MapView(context).apply {
-                        setMultiTouchControls(true)
+                        MapView(ctx).apply {
+                            setMultiTouchControls(true)
 
-                        controller.setZoom(6.0)
-                        post {
-                            controller.setCenter(GeoPoint(41.8719, 12.5674))
-                        }
-
-                        val googleTileSource = object : org.osmdroid.tileprovider.tilesource.XYTileSource(
-                            "GoogleMaps",
-                            1, 20, 256, ".png",
-                            arrayOf("https://mt1.google.com/vt/lyrs=m&hl=it")
-                        ) {
-                            override fun getTileURLString(pMapTileIndex: Long): String {
-                                return baseUrl + "&x=" + org.osmdroid.util.MapTileIndex.getX(pMapTileIndex) +
-                                        "&y=" + org.osmdroid.util.MapTileIndex.getY(pMapTileIndex) +
-                                        "&z=" + org.osmdroid.util.MapTileIndex.getZoom(pMapTileIndex)
+                            controller.setZoom(6.0)
+                            post {
+                                controller.setCenter(GeoPoint(41.8719, 12.5674))
                             }
-                        }
-                        setTileSource(googleTileSource)
-                        isTilesScaledToDpi = true
 
-                        val iconaCinema = ContextCompat.getDrawable(context, R.drawable.ic_cinema)
-                        iconaCinema?.setTint(android.graphics.Color.parseColor("#5C0000"))
-
-                        iconaCinema?.setBounds(0, 0,
-                            iconaCinema.intrinsicWidth.coerceAtLeast(100),
-                            iconaCinema.intrinsicHeight.coerceAtLeast(100)
-                        )
-
-                        for (cinema in CinemaMockData.listaCinema) {
-                            val marker = Marker(this).apply {
-                                position = GeoPoint(cinema.lat, cinema.lon)
-                                setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                                title = cinema.nome
-                                icon = iconaCinema
+                            val googleTileSource = object : org.osmdroid.tileprovider.tilesource.XYTileSource(
+                                "GoogleMaps",
+                                1, 20, 256, ".png",
+                                arrayOf("https://mt1.google.com/vt/lyrs=m&hl=it")
+                            ) {
+                                override fun getTileURLString(pMapTileIndex: Long): String {
+                                    return baseUrl + "&x=" + org.osmdroid.util.MapTileIndex.getX(pMapTileIndex) +
+                                            "&y=" + org.osmdroid.util.MapTileIndex.getY(pMapTileIndex) +
+                                            "&z=" + org.osmdroid.util.MapTileIndex.getZoom(pMapTileIndex)
+                                }
                             }
-                            overlays.add(marker)
-                        }
+                            setTileSource(googleTileSource)
+                            isTilesScaledToDpi = true
 
-                        invalidate()
+                            val iconaCinema = ContextCompat.getDrawable(ctx, R.drawable.ic_cinema)
+                            iconaCinema?.setTint(android.graphics.Color.parseColor("#5C0000"))
+
+                            iconaCinema?.setBounds(0, 0,
+                                iconaCinema.intrinsicWidth.coerceAtLeast(100),
+                                iconaCinema.intrinsicHeight.coerceAtLeast(100)
+                            )
+
+                            for (cinema in CinemaMockData.listaCinema) {
+                                val marker = Marker(this).apply {
+                                    position = GeoPoint(cinema.lat, cinema.lon)
+                                    setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                                    title = cinema.nome
+                                    icon = iconaCinema
+                                }
+                                overlays.add(marker)
+                            }
+
+                            invalidate()
+                        }
                     }
+                )
+
+                ExtendedFloatingActionButton(
+                    onClick = {
+
+                        locationPermissionRequest.launch(
+                            arrayOf(
+                                Manifest.permission.ACCESS_FINE_LOCATION,
+                                Manifest.permission.ACCESS_COARSE_LOCATION
+                            )
+                        )
+                    },
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 24.dp),
+                    containerColor = Color(0xFF5C0000),
+                    contentColor = Color(0xFFFECE79)
+                ) {
+                    Icon(imageVector = Icons.Default.Search, contentDescription = "Cerca")
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = "Cerca sale vicine")
                 }
-            )
+            }
         }
     }
 }
