@@ -4,7 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.*
@@ -95,31 +95,54 @@ fun HomeContent(listaCuriosita: List<Curiosita>, paddingEsterno: PaddingValues) 
         item {
             Text(text = "Curiosità sul cinema...", color = Color.White, fontSize = 57.sp, fontFamily = FontFamily.Serif, textAlign = TextAlign.Center, lineHeight = 62.sp, modifier = Modifier.fillMaxWidth().padding(vertical = 50.dp, horizontal = 16.dp))
         }
-        itemsIndexed(listaCuriosita) { index, curiosita ->
-            CuriositaRow(curiosita = curiosita, immagineASinistra = index % 2 == 0)
+
+        // Ho sostituito itemsIndexed con items normale, dato che l'alternanza non serve più
+        items(listaCuriosita) { curiosita ->
+            CuriositaItem(curiosita = curiosita)
         }
+
         item { Spacer(modifier = Modifier.height(80.dp)) }
     }
 }
 
+// Nuova funzione per disporre gli elementi in verticale
 @Composable
-fun CuriositaRow(curiosita: Curiosita, immagineASinistra: Boolean) {
-    Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 40.dp, vertical = 16.dp), verticalAlignment = Alignment.CenterVertically) {
-        if (immagineASinistra) {
-            Image(painter = painterResource(id = curiosita.immagine), contentDescription = null, modifier = Modifier.weight(1f).height(350.dp), contentScale = ContentScale.Fit)
-            Spacer(modifier = Modifier.width(40.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(text = curiosita.titolo, color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Serif)
-                Text(text = curiosita.testo, color = Color(0xFFE0E0E0), fontSize = 17.sp, fontFamily = FontFamily.Serif, lineHeight = 26.sp, modifier = Modifier.padding(top = 12.dp))
-            }
-        } else {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(text = curiosita.titolo, color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Serif)
-                Text(text = curiosita.testo, color = Color(0xFFE0E0E0), fontSize = 17.sp, fontFamily = FontFamily.Serif, lineHeight = 26.sp, modifier = Modifier.padding(top = 12.dp))
-            }
-            Spacer(modifier = Modifier.width(40.dp))
-            Image(painter = painterResource(id = curiosita.immagine), contentDescription = null, modifier = Modifier.weight(1f).height(350.dp), contentScale = ContentScale.Fit)
-        }
+fun CuriositaItem(curiosita: Curiosita) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 32.dp, vertical = 24.dp)
+    ) {
+        // Titolo
+        Text(
+            text = curiosita.titolo,
+            color = Color.White,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            fontFamily = FontFamily.Serif
+        )
+        // Testo (ora ha tutto lo spazio in larghezza)
+        Text(
+            text = curiosita.testo,
+            color = Color(0xFFE0E0E0),
+            fontSize = 17.sp,
+            fontFamily = FontFamily.Serif,
+            lineHeight = 26.sp,
+            modifier = Modifier.padding(top = 12.dp)
+        )
+
+        // Spazio per far respirare testo e immagine
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Immagine sotto al testo
+        Image(
+            painter = painterResource(id = curiosita.immagine),
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(250.dp), // Altezza ridotta leggermente per bilanciare la visuale
+            contentScale = ContentScale.Fit
+        )
     }
 }
 
