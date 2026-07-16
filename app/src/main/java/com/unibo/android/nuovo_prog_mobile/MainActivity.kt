@@ -25,6 +25,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import android.home.HomeScreen
+import android.leaderboard.ClassificaViewModel
+import android.leaderboard.ClassificaViewModelFactory
 import android.screens.MapScreen
 import android.screens.ProfileScreen
 import androidx.navigation.compose.NavHost
@@ -32,6 +34,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.unibo.android.ui.screens.LoginScreen
 import android.screens.RegisterScreen
+import com.unibo.android.ui.leaderboard.ClassificaScreen
 
 // La tua chiave API TMDB (se usi BuildConfig, puoi scambiarla alla riga 102)
 private const val TMDB_API_KEY = "f68e046df68555567f96d4cdfcc3ffdf"
@@ -86,6 +89,15 @@ class MainActivity : ComponentActivity() {
 
                         composable("profilo") {
                             ProfileScreen(navController = navController)
+                        }
+
+                        composable("classifica") {
+                            val repository = UseCasesProvider.getRepository()
+                            val classificaViewModel: ClassificaViewModel = viewModel(
+                                factory = ClassificaViewModelFactory(repository)
+                            )
+
+                            ClassificaScreen(viewModel = classificaViewModel)
                         }
 
                         composable("ricerca") {

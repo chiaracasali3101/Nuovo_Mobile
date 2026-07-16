@@ -1,6 +1,5 @@
 package com.unibo.android.domain.di
 
-import com.unibo.android.domain.di.UseCasesProvider.useCasesVisto
 import com.unibo.android.domain.models.Film
 import com.unibo.android.domain.repositories.MovieRepository
 import com.unibo.android.domain.usecases.UseCasesRicerca
@@ -34,5 +33,9 @@ object UseCasesProvider {
         this.useCasesWatchlist = UseCasesWatchlist(repository = movieRepository as FilmRepository)
         this.useCasesPreferito = UseCasesPreferito(repository = movieRepository as FilmRepository)
         this.useCasesVisto = UseCasesVisto(repository = movieRepository as FilmRepository)
+    }
+
+    fun getRepository(): MovieRepository {
+        return movieRepository
     }
 }
