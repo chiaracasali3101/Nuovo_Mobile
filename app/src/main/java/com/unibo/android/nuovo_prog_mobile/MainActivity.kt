@@ -35,8 +35,6 @@ import androidx.navigation.compose.rememberNavController
 import com.unibo.android.ui.screens.LoginScreen
 import android.screens.RegisterScreen
 import com.unibo.android.ui.leaderboard.ClassificaScreen
-
-// La tua chiave API TMDB (se usi BuildConfig, puoi scambiarla alla riga 102)
 private const val TMDB_API_KEY = "f68e046df68555567f96d4cdfcc3ffdf"
 
 class MainActivity : ComponentActivity() {
@@ -50,11 +48,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    // Inizializzazione del ViewModel e del NavController
                     val dettaglioViewModel: DettaglioViewModel = viewModel()
                     val navController = rememberNavController()
 
-                    // Il NavHost gestisce TUTTE le schermate
+
                     NavHost(navController = navController, startDestination = "login") {
 
                         composable("login") {
@@ -100,12 +97,41 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("classifica") {
-                            val repository = UseCasesProvider.getRepository()
-                            val classificaViewModel: ClassificaViewModel = viewModel(
-                                factory = ClassificaViewModelFactory(repository)
+                            val repository = com.unibo.android.domain.di.UseCasesProvider.getRepository()
+                            val classificaViewModel: android.leaderboard.ClassificaViewModel = viewModel(
+                                factory = android.leaderboard.ClassificaViewModelFactory(repository)
                             )
 
-                            ClassificaScreen(viewModel = classificaViewModel)
+                            var filmSelezionato by remember { mutableStateOf<Film?>(null) }
+                            val scope = rememberCoroutineScope()
+
+                            if (filmSelezionato == null) {
+                                com.unibo.android.ui.leaderboard.ClassificaScreen(
+                                    viewModel = classificaViewModel,
+                                    onMovieClick = { film -> filmSelezionato = film }
+                                )
+                            } else {
+                                android.presentation.DettaglioFilm(
+                                    film = filmSelezionato,
+                                    onBack = { filmSelezionato = null },
+                                    onInviaRecensione = { /* Logica per la recensione */ },
+                                    onAggiungiWatchlist = {
+                                        scope.launch {
+                                            filmSelezionato?.let { com.unibo.android.domain.di.UseCasesProvider.useCasesWatchlist.invoke(it) }
+                                        }
+                                    },
+                                    onPreferito = { nuovoValore ->
+                                        scope.launch {
+                                            filmSelezionato?.let { com.unibo.android.domain.di.UseCasesProvider.useCasesPreferito.invoke(it, nuovoValore) }
+                                        }
+                                    },
+                                    onVisto = { nuovoValore ->
+                                        scope.launch {
+                                            filmSelezionato?.let { com.unibo.android.domain.di.UseCasesProvider.useCasesVisto.invoke(it, nuovoValore) }
+                                        }
+                                    }
+                                )
+                            }
                         }
                         composable("ricerca") {
                             var query by remember { mutableStateOf("") }
@@ -118,7 +144,6 @@ class MainActivity : ComponentActivity() {
                                     listaFilm = emptyList()
                                     return@LaunchedEffect
                                 }
-                                // Aspetta mezzo secondo prima di fare la ricerca per non sovraccaricare l'API mentre digiti
                                 delay(500)
                                 listaFilm = withContext(Dispatchers.IO) {
                                     UseCasesProvider.useCasesRicerca(
@@ -136,7 +161,6 @@ class MainActivity : ComponentActivity() {
                                     onMovieClick = { film -> filmSelezionato = film }
                                 )
                             } else {
-                                // Salviamo direttamente nel DB chiamando gli UseCases tramite scope.launch!
                                 DettaglioFilm(
                                     film = filmSelezionato,
                                     onBack = { filmSelezionato = null },
@@ -165,9 +189,9 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                         }
-                    } // 1. Chiude NavHost
-                } // 2. Chiude Surface
-            } // 3. Chiude MaterialTheme
-        } // 4. Chiude setContent
-    } // 5. Chiude onCreate
-} // 6. Chiude MainActivity
+                    }
+                }
+            }
+        }
+    }
+}

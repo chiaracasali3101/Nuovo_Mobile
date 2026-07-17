@@ -22,8 +22,6 @@ class FilmRepositoryImpl(
 ) : FilmRepository, MovieRepository {
 
     private val BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w500"
-
-    // --- MovieRepository ---
     private val _movieList = MutableStateFlow<List<Film>>(emptyList())
     override val movieList: StateFlow<List<Film>> = _movieList
 
@@ -34,20 +32,33 @@ class FilmRepositoryImpl(
     }
 
     override suspend fun getPopularMovies(): List<Film> {
-        return apiService.getFilmPopolari(apiKey = apiKey).results.map { dto ->
-            FilmEntity(
-                id = dto.id,
-                titolo = dto.titolo,
-                anno = "N/D",
-                trama = dto.trama ?: "Nessuna trama disponibile",
-                genere = "Cinema",
-                durata = "N/D",
-                regista = "N/D",
-                punteggio = 5.0,
-                percorsoLocandina = dto.percorsoLocandina ?: "",
-                preferito = false,
-                visto = false
-            ).toDomain()
+        return try {
+            val risposta = apiService.getFilmPopolari(apiKey = "f68e046df68555567f96d4cdfcc3ffdf")
+            risposta.results.map { dto ->
+                FilmEntity(
+                    id = dto.id,
+                    titolo = dto.titolo,
+                    anno = "N/D",
+                    trama = dto.trama ?: "Nessuna trama disponibile",
+                    genere = "Cinema",
+                    durata = "N/D",
+                    regista = "N/D",
+                    punteggio = 5.0,
+                    percorsoLocandina = dto.percorsoLocandina ?: "",
+                    preferito = false,
+                    visto = false
+                ).toDomain()
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("FilmRepository", "Errore API getPopularMovies: ${e.message}")
+
+            try {
+                val filmOffline = filmDao.getFilmsByQuery("").map { it.toDomain() }
+                android.util.Log.d("FilmRepository", "Mostro ${filmOffline.size} film dal DB offline")
+                filmOffline
+            } catch (ex: Exception) {
+                emptyList()
+            }
         }
     }
 
@@ -55,7 +66,6 @@ class FilmRepositoryImpl(
         return getPopularMovies()
     }
 
-    // --- FilmRepository ---
     override fun getTuttiIFilm(): Flow<List<Film>> {
         return filmDao.getTuttiIFilm().map { listaEntity ->
             listaEntity.map { entity -> entity.toDomain() }
