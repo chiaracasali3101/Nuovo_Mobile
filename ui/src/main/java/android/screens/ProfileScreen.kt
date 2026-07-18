@@ -1,4 +1,4 @@
-package android.screens
+package android.screens // Cambialo se il tuo Android Studio ti segnala la prima riga rossa
 
 import android.components.ReViewBottomBar
 import android.graphics.Bitmap
@@ -38,20 +38,22 @@ import coil.compose.AsyncImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(navController: androidx.navigation.NavController) {
+fun ProfileScreen(
+    navController: androidx.navigation.NavController,
+    viewModel: ProfileViewModel
+) {
     val sfondoMarrone = Color(0xFF210100)
     val coloreCrema = Color(0xFFFECE79)
     val coloreOro = Color(0xFFE6A341)
     val coloreRossoTesto = Color(0xFFB14A36)
     val coloreRossoBottoni = Color(0xFF8C0902)
 
-    val listaFilmVisti = listOf(
-        Pair("Inception", "8.5"), Pair("Interstellar", "8.5"), Pair("Pulp Fiction", "9.0"),
-        Pair("WinterMarter", "8.5"), Pair("Sal:lisare", "8.5"), Pair("The Prestige", "8.8")
-    )
-    val listaWatchlist = listOf("Dune: Part Two", "Oppenheimer", "The Batman", "Blade Runner 2049", "Gladiator 2")
+    val listaFilmVisti by viewModel.filmVisti.collectAsState(initial = emptyList())
+    val listaWatchlist by viewModel.watchlist.collectAsState(initial = emptyList())
+
     var profileImageUri by remember { mutableStateOf<Uri?>(null) }
     var profileImageBitmap by remember { mutableStateOf<Bitmap?>(null) }
+
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri ->
@@ -113,6 +115,7 @@ fun ProfileScreen(navController: androidx.navigation.NavController) {
                 Spacer(modifier = Modifier.height(30.dp))
                 Text(text = "IL TUO PROFILO", color = coloreCrema, fontSize = 13.sp, fontWeight = FontWeight.Bold, letterSpacing = 2.sp)
                 Spacer(modifier = Modifier.height(45.dp))
+
                 Box(
                     modifier = Modifier
                         .size(120.dp)
@@ -146,8 +149,8 @@ fun ProfileScreen(navController: androidx.navigation.NavController) {
                 }
 
                 Spacer(modifier = Modifier.height(15.dp))
-                Text(text = "Ana", color = coloreCrema, fontSize = 28.sp, fontWeight = FontWeight.Bold)
-                Text(text = "ana.systemexpert@unibo.it", color = coloreCrema.copy(alpha = 0.6f), fontSize = 14.sp)
+                Text(text = "Lola", color = coloreCrema, fontSize = 28.sp, fontWeight = FontWeight.Bold)
+                Text(text = "lola.scotti@studio.unibo.it", color = coloreCrema.copy(alpha = 0.6f), fontSize = 14.sp)
 
                 Spacer(modifier = Modifier.height(25.dp))
 
@@ -162,9 +165,7 @@ fun ProfileScreen(navController: androidx.navigation.NavController) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable {
-                                    cameraLauncher.launch(null)
-                                }
+                                .clickable { cameraLauncher.launch(null) }
                                 .padding(vertical = 10.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -179,7 +180,7 @@ fun ProfileScreen(navController: androidx.navigation.NavController) {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable {
-                                    galleryLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) // Lancia la galleria!
+                                    galleryLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                                 }
                                 .padding(vertical = 10.dp),
                             verticalAlignment = Alignment.CenterVertically
@@ -194,16 +195,14 @@ fun ProfileScreen(navController: androidx.navigation.NavController) {
                 Spacer(modifier = Modifier.height(25.dp))
 
                 Row(modifier = Modifier.fillMaxWidth(0.9f), horizontalArrangement = Arrangement.spacedBy(15.dp)) {
-                    StatisticCard(Modifier.weight(1f), "52", "Film Visti", coloreRossoBottoni, coloreCrema)
-                    StatisticCard(Modifier.weight(1f), "14", "Recensioni", coloreRossoBottoni, coloreCrema)
+                    StatisticCard(Modifier.weight(1f), "${listaFilmVisti.size}", "Film Visti", coloreRossoBottoni, coloreCrema)
+                    StatisticCard(Modifier.weight(1f), "0", "Recensioni", coloreRossoBottoni, coloreCrema)
                 }
 
                 Spacer(modifier = Modifier.height(25.dp))
 
                 Button(
-                    onClick = {
-                        navController.navigate("mappa")
-                    },
+                    onClick = { navController.navigate("mappa") },
                     modifier = Modifier.fillMaxWidth(0.9f).height(50.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = coloreRossoBottoni),
                     shape = RoundedCornerShape(10.dp)
@@ -215,15 +214,32 @@ fun ProfileScreen(navController: androidx.navigation.NavController) {
 
                 Spacer(modifier = Modifier.height(40.dp))
 
-
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(15.dp)) {
                     Column(modifier = Modifier.weight(1f)) {
                         SectionTitle("FILM RECENTI")
-                        listaFilmVisti.forEach { MovieItem(it.first, it.second, Icons.Default.Star, Color.Red, coloreCrema, coloreRossoTesto) }
+                        listaFilmVisti.forEach { film ->
+                            MovieItem(
+                                title = film.titolo ?: "Sconosciuto",
+                                subtitle = film.punteggio.toString(),
+                                icon = Icons.Default.Star,
+                                iconColor = Color.Red,
+                                textColor = coloreCrema,
+                                subColor = coloreRossoTesto
+                            )
+                        }
                     }
                     Column(modifier = Modifier.weight(1f)) {
                         SectionTitle("WATCHLIST")
-                        listaWatchlist.forEach { MovieItem(it, "Da vedere", ImageVector.vectorResource(id = R.drawable.ic_bookmark), coloreOro, coloreCrema, coloreRossoTesto) }
+                        listaWatchlist.forEach { film ->
+                            MovieItem(
+                                title = film.titolo ?: "Sconosciuto",
+                                subtitle = "Da vedere",
+                                icon = ImageVector.vectorResource(id = R.drawable.ic_bookmark),
+                                iconColor = coloreOro,
+                                textColor = coloreCrema,
+                                subColor = coloreRossoTesto
+                            )
+                        }
                     }
                 }
                 Spacer(modifier = Modifier.height(40.dp))
@@ -231,7 +247,6 @@ fun ProfileScreen(navController: androidx.navigation.NavController) {
         }
     }
 }
-
 
 @Composable
 fun StatisticCard(modifier: Modifier, value: String, label: String, bgColor: Color, textColor: Color) {
@@ -266,17 +281,10 @@ fun MovieItem(title: String, subtitle: String, icon: ImageVector, iconColor: Col
                 Spacer(modifier = Modifier.width(6.dp))
                 Column {
                     Text(text = title, color = textColor, fontSize = 13.sp, fontWeight = FontWeight.Bold, maxLines = 1)
-                    if (subtitle != "Da vedere") Text(text = "20/05/2026", color = Color.Gray, fontSize = 9.sp)
+                    if (subtitle != "Da vedere") Text(text = "Recente", color = Color.Gray, fontSize = 9.sp)
                 }
             }
             Text(text = subtitle, color = subColor, fontSize = 12.sp, fontWeight = FontWeight.Bold)
         }
     }
-}
-
-@Preview(showBackground = true, widthDp = 400, heightDp = 1200)
-@Composable
-fun ProfilePreview() {
-    val mockNavController = androidx.navigation.compose.rememberNavController()
-    ProfileScreen(navController = mockNavController)
 }

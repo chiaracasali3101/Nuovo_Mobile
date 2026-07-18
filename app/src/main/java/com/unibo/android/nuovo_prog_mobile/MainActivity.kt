@@ -35,6 +35,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.unibo.android.ui.screens.LoginScreen
 import android.screens.RegisterScreen
+import com.unibo.android.android.data.repositories.FilmRepositoryImpl
+import com.unibo.android.domain.repositories.FilmRepository
 import com.unibo.android.ui.leaderboard.ClassificaScreen
 
 private const val TMDB_API_KEY = "f68e046df68555567f96d4cdfcc3ffdf"
@@ -97,7 +99,22 @@ class MainActivity : ComponentActivity() {
                             MapScreen(navController = navController)
                         }
                         composable("profilo") {
-                            ProfileScreen(navController = navController)
+                            //recuperiamo il db
+                            val repository = UseCasesProvider.getRepository()
+
+                            // creiamo il tuo nuovo ProfileViewModel
+                            val profileViewModel: android.screens.ProfileViewModel = viewModel(
+                                factory = object : androidx.lifecycle.ViewModelProvider.Factory {
+                                    @Suppress("UNCHECKED_CAST")
+                                    override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+                                        // diciamo ad Android di leggerlo come FilmRepository
+                                        return android.screens.ProfileViewModel(repository as com.unibo.android.domain.repositories.FilmRepository) as T
+                                    }
+                                }
+                            )
+
+                            // lo passiamo finalmente alla schermata
+                            ProfileScreen(navController = navController, viewModel = profileViewModel)
                         }
 
                         composable("classifica") {
