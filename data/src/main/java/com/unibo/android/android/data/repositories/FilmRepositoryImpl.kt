@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlin.coroutines.cancellation.CancellationException
 
 class FilmRepositoryImpl(
     private val filmDao: FilmDao,
@@ -21,8 +22,6 @@ class FilmRepositoryImpl(
 ) : FilmRepository, MovieRepository {
 
     private val BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w500"
-
-    // --- MovieRepository ---
     private val _movieList = MutableStateFlow<List<Film>>(emptyList())
     override val movieList: StateFlow<List<Film>> = _movieList
 
@@ -33,19 +32,33 @@ class FilmRepositoryImpl(
     }
 
     override suspend fun getPopularMovies(): List<Film> {
-        return apiService.getFilmPopolari(apiKey = apiKey).results.map { dto ->
-            FilmEntity(
-                id = dto.id,
-                titolo = dto.titolo,
-                anno = "N/D",
-                trama = dto.trama ?: "Nessuna trama disponibile",
-                genere = "Cinema",
-                durata = "N/D",
-                regista = "N/D",
-                punteggio = 5.0,
-                percorsoLocandina = dto.percorsoLocandina ?: "",
-                preferito = false
-            ).toDomain()
+        return try {
+            val risposta = apiService.getFilmPopolari(apiKey = "f68e046df68555567f96d4cdfcc3ffdf")
+            risposta.results.map { dto ->
+                FilmEntity(
+                    id = dto.id,
+                    titolo = dto.titolo,
+                    anno = "N/D",
+                    trama = dto.trama ?: "Nessuna trama disponibile",
+                    genere = "Cinema",
+                    durata = "N/D",
+                    regista = "N/D",
+                    punteggio = 5.0,
+                    percorsoLocandina = dto.percorsoLocandina ?: "",
+                    preferito = false,
+                    visto = false
+                ).toDomain()
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("FilmRepository", "Errore API getPopularMovies: ${e.message}")
+
+            try {
+                val filmOffline = filmDao.getFilmsByQuery("").map { it.toDomain() }
+                android.util.Log.d("FilmRepository", "Mostro ${filmOffline.size} film dal DB offline")
+                filmOffline
+            } catch (ex: Exception) {
+                emptyList()
+            }
         }
     }
 
@@ -53,7 +66,6 @@ class FilmRepositoryImpl(
         return getPopularMovies()
     }
 
-    // --- FilmRepository ---
     override fun getTuttiIFilm(): Flow<List<Film>> {
         return filmDao.getTuttiIFilm().map { listaEntity ->
             listaEntity.map { entity -> entity.toDomain() }
@@ -82,12 +94,15 @@ class FilmRepositoryImpl(
                     regista = "N/D",
                     punteggio = 5.0,
                     percorsoLocandina = dto.percorsoLocandina ?: "",
-                    preferito = false
+                    preferito = false,
+                    visto = false
                 )
                 entity.toDomain()
             }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
-            android.util.Log.e("CercaFilmOnline", "Errore ricerca", e)
+            android.util.Log.e("CercaFilmOnline", "Errore ricerca: ${e.message}", e)
             emptyList()
         }
     }
@@ -107,7 +122,8 @@ class FilmRepositoryImpl(
                         regista = "N/D",
                         punteggio = 5.0,
                         percorsoLocandina = dto.percorsoLocandina ?: "",
-                        preferito = false
+                        preferito = false,
+                        visto = false
                     )
                 )
             }
@@ -128,14 +144,51 @@ class FilmRepositoryImpl(
                 regista = film.regista,
                 punteggio = film.punteggio,
                 percorsoLocandina = film.percorsoLocandina,
-                preferito = true
+                preferito = false,
+                visto = film.visto
             )
         )
     }
+
+    override suspend fun preferito(film: Film, nuovoValore: Boolean) {
+        val esisteGia = filmDao.getFilmById(film.id) != null
+        val entity = FilmEntity(
+            id = film.id,
+            titolo = film.titolo,
+            anno = film.anno,
+            trama = film.trama,
+            genere = film.genere,
+            durata = film.durata,
+            regista = film.regista,
+            punteggio = film.punteggio,
+            percorsoLocandina = film.percorsoLocandina,
+            preferito = nuovoValore,
+            visto = film.visto
+        )
+        if (esisteGia) {
+            filmDao.updateFilm(entity)
+        } else {
+            filmDao.addWatchlist(entity)
+        }
+    }
+
+    override suspend fun impostaVisto(
+        film: Film,
+        nuovoValore: Boolean
+    ) {
+        val esisteGia = filmDao.getFilmById(film.id) != null
+        val entity = film.toEntity().copy(visto = nuovoValore)
+
+        if (esisteGia) {
+            filmDao.updateFilm(entity)
+        } else {
+            filmDao.addWatchlist(entity)
+        }
+    }
 }
 
-fun FilmEntity.toDomain(): Film {
-    return Film(
+fun Film.toEntity(): FilmEntity {
+    return FilmEntity(
         id = this.id,
         titolo = this.titolo,
         anno = this.anno,
@@ -145,6 +198,7 @@ fun FilmEntity.toDomain(): Film {
         regista = this.regista,
         punteggio = this.punteggio,
         percorsoLocandina = this.percorsoLocandina,
-        preferito = this.preferito
+        preferito = this.preferito == true,
+        visto = this.visto
     )
 }

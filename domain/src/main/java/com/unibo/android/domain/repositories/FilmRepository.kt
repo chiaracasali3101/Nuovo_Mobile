@@ -17,5 +17,10 @@ interface FilmRepository {
     suspend fun sincronizzaFilm(apiKey: String)
 
     suspend fun addWatchlist(film: com.unibo.android.domain.models.Film)
+
     suspend fun getPopularMovies(): List<com.unibo.android.domain.models.Film>
+
+    suspend fun preferito(film: com.unibo.android.domain.models.Film, nuovoValore: Boolean)
+
+    suspend fun impostaVisto(film: com.unibo.android.domain.models.Film, nuovoValore: Boolean)
 }

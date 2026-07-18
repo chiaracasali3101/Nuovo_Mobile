@@ -17,14 +17,19 @@ class ClassificaViewModel(
 
     private val _topRatedMovies = MutableStateFlow<List<Film>>(emptyList())
     val topRatedMovies: StateFlow<List<Film>> = _topRatedMovies.asStateFlow()
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
     init {
         viewModelScope.launch {
+            _isLoading.value = true
             try {
                 val movies: List<Film> = repository.getTopRatedMovies()
                 _topRatedMovies.update { movies }
             } catch (e: Exception) {
                 e.printStackTrace()
+            } finally {
+                _isLoading.value = false
             }
         }
     }

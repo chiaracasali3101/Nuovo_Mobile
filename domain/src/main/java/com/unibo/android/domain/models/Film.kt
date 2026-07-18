@@ -10,5 +10,6 @@ data class Film(
     var regista: String? = null,
     var punteggio: Double? = 0.0,
     var percorsoLocandina: String? = null,
-    var preferito: Boolean? = false
+    var preferito: Boolean? = false,
+    val visto: Boolean = false
 )

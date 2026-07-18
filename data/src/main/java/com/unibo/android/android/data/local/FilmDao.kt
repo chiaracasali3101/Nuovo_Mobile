@@ -36,4 +36,7 @@ interface FilmDao {
     //recensione
     @Update
     suspend fun updateFilm(film: FilmEntity)
+
+    @Query("SELECT * FROM watchlist LIMIT 1")
+    suspend fun inserisciFilm(): List<FilmEntity>
 }

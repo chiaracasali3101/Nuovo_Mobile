@@ -2,6 +2,7 @@ package com.unibo.android.ui.leaderboard
 
 import android.leaderboard.ClassificaViewModel
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -29,16 +30,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 
-
 @Composable
-fun ClassificaScreen(viewModel: ClassificaViewModel) {
+fun ClassificaScreen(viewModel: ClassificaViewModel, onMovieClick: (Film) -> Unit) {
     val listaFilm by viewModel.topRatedMovies.collectAsState()
+    val staCaricando by viewModel.isLoading.collectAsState()
 
-    ClassificaContent(listaFilm = listaFilm)
+    ClassificaContent(listaFilm = listaFilm, isLoading = staCaricando, onMovieClick = onMovieClick)
 }
 
 @Composable
-fun ClassificaContent(listaFilm: List<Film>) {
+fun ClassificaContent(listaFilm: List<Film>, isLoading: Boolean, onMovieClick: (Film) -> Unit) {
     val backgroundColor = Color(0xFF3B0000)
 
     LazyColumn(
@@ -71,8 +72,7 @@ fun ClassificaContent(listaFilm: List<Film>) {
                     .padding(top = 8.dp, bottom = 40.dp)
             )
         }
-
-        if (listaFilm.isEmpty()) {
+        if (isLoading) {
             item {
                 Box(
                     modifier = Modifier.fillMaxWidth().height(300.dp),
@@ -81,15 +81,25 @@ fun ClassificaContent(listaFilm: List<Film>) {
                     CircularProgressIndicator(color = Color.White)
                 }
             }
+        } else if (listaFilm.isEmpty()) {
+            item {
+                Text(
+                    text = "Nessun film trovato.\nControlla la tua connessione internet o la chiave API!",
+                    color = Color.White,
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth().padding(32.dp)
+                )
+            }
         } else {
-
             itemsIndexed(listaFilm) { index, film ->
                 ClassificaItem(
                     posizione = index + 1,
                     titolo = film.titolo ?: "Titolo n.d.",
                     anno = film.anno ?.take(4) ?: "Anno n.d.",
                     voto = film.punteggio ?: 0.0,
-                    posterPath = film.percorsoLocandina
+                    posterPath = film.percorsoLocandina,
+                    onClick = { onMovieClick(film) }
                 )
             }
         }
@@ -99,10 +109,18 @@ fun ClassificaContent(listaFilm: List<Film>) {
 }
 
 @Composable
-fun ClassificaItem(posizione: Int, titolo: String, anno: String, voto: Double, posterPath: String?) {
+fun ClassificaItem(
+    posizione: Int,
+    titolo: String,
+    anno: String,
+    voto: Double,
+    posterPath: String?,
+    onClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable { onClick() }
             .padding(vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -165,32 +183,13 @@ fun ClassificaItem(posizione: Int, titolo: String, anno: String, voto: Double, p
         }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 fun ClassificaPreview() {
     MaterialTheme {
         Surface {
-            val listaFilmFinti = listOf(
-                Film(
-                    titolo = "Il Padrino",
-                    anno = "1972-03-14",
-                    punteggio = 9.2,
-                    percorsoLocandina = "/3bhkrj58Vtu7enYsRolD1fZdja1.jpg"
-                ),
-                Film(
-                    titolo = "Le ali della libertà",
-                    anno = "1994-09-23",
-                    punteggio = 8.7,
-                    percorsoLocandina = "/q6y0Go1tsGEsmtFryDOJo3dENvU.jpg"
-                ),
-                Film(
-                    titolo = "Il Signore degli Anelli - Il ritorno del re",
-                    anno = "2003-12-01",
-                    punteggio = 8.5,
-                    percorsoLocandina = "/rCzpDGLbOoPwLjy3OAm5NUPOTrC.jpg"
-                )
-            )
-            ClassificaContent(listaFilm = listaFilmFinti)
+            ClassificaContent(listaFilm = emptyList(), isLoading = false, onMovieClick = {})
         }
     }
 }
