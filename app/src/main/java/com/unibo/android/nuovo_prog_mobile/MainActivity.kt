@@ -1,5 +1,6 @@
 package com.unibo.android.nuovo_prog_mobile
 
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -35,8 +36,8 @@ import androidx.navigation.compose.rememberNavController
 import com.unibo.android.ui.screens.LoginScreen
 import android.screens.RegisterScreen
 import com.unibo.android.ui.leaderboard.ClassificaScreen
-private const val TMDB_API_KEY = "f68e046df68555567f96d4cdfcc3ffdf"
 
+private const val TMDB_API_KEY = "f68e046df68555567f96d4cdfcc3ffdf"
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +52,6 @@ class MainActivity : ComponentActivity() {
                     val dettaglioViewModel: DettaglioViewModel = viewModel()
                     val navController = rememberNavController()
 
-
                     NavHost(navController = navController, startDestination = "login") {
 
                         composable("login") {
@@ -63,6 +63,7 @@ class MainActivity : ComponentActivity() {
                                         }
                                     }
                                 },
+
                                 onNavigateToRegister = {
                                     navController.navigate("registrazione")
                                 }
@@ -75,64 +76,75 @@ class MainActivity : ComponentActivity() {
                                     navController.navigate("home") {
                                         popUpTo("login") {
                                             inclusive = true
+
                                         }
                                     }
                                 },
+
                                 onNavigateToLogin = {
                                     navController.popBackStack()
+
                                 }
                             )
                         }
 
+
+
                         composable("home") {
                             HomeScreen(navController = navController)
                         }
-
                         composable("mappa") {
                             MapScreen(navController = navController)
                         }
-
                         composable("profilo") {
                             ProfileScreen(navController = navController)
                         }
 
                         composable("classifica") {
-                            val repository = com.unibo.android.domain.di.UseCasesProvider.getRepository()
-                            val classificaViewModel: android.leaderboard.ClassificaViewModel = viewModel(
-                                factory = android.leaderboard.ClassificaViewModelFactory(repository)
+                            val repository = UseCasesProvider.getRepository()
+                            val classificaViewModel: ClassificaViewModel = viewModel(
+                                factory = ClassificaViewModelFactory(repository)
                             )
 
                             var filmSelezionato by remember { mutableStateOf<Film?>(null) }
                             val scope = rememberCoroutineScope()
-
                             if (filmSelezionato == null) {
-                                com.unibo.android.ui.leaderboard.ClassificaScreen(
+                                ClassificaScreen(
                                     viewModel = classificaViewModel,
                                     onMovieClick = { film -> filmSelezionato = film }
                                 )
                             } else {
-                                android.presentation.DettaglioFilm(
+
+                                DettaglioFilm(
                                     film = filmSelezionato,
                                     onBack = { filmSelezionato = null },
                                     onInviaRecensione = { /* Logica per la recensione */ },
                                     onAggiungiWatchlist = {
                                         scope.launch {
-                                            filmSelezionato?.let { com.unibo.android.domain.di.UseCasesProvider.useCasesWatchlist.invoke(it) }
+                                            filmSelezionato?.let { UseCasesProvider.useCasesWatchlist.invoke(it) }
                                         }
                                     },
+
                                     onPreferito = { nuovoValore ->
                                         scope.launch {
-                                            filmSelezionato?.let { com.unibo.android.domain.di.UseCasesProvider.useCasesPreferito.invoke(it, nuovoValore) }
+                                            filmSelezionato?.let { UseCasesProvider.useCasesPreferito.invoke(it, nuovoValore) }
                                         }
                                     },
+
                                     onVisto = { nuovoValore ->
                                         scope.launch {
-                                            filmSelezionato?.let { com.unibo.android.domain.di.UseCasesProvider.useCasesVisto.invoke(it, nuovoValore) }
+                                            filmSelezionato?.let { UseCasesProvider.useCasesVisto.invoke(it, nuovoValore) }
+
                                         }
+
                                     }
+
                                 )
+
                             }
+
                         }
+
                         composable("ricerca") {
                             var query by remember { mutableStateOf("") }
                             var listaFilm by remember { mutableStateOf(emptyList<Film>()) }
@@ -144,6 +156,7 @@ class MainActivity : ComponentActivity() {
                                     listaFilm = emptyList()
                                     return@LaunchedEffect
                                 }
+
                                 delay(500)
                                 listaFilm = withContext(Dispatchers.IO) {
                                     UseCasesProvider.useCasesRicerca(
@@ -160,6 +173,7 @@ class MainActivity : ComponentActivity() {
                                     onQueryChange = { nuovoTesto -> query = nuovoTesto },
                                     onMovieClick = { film -> filmSelezionato = film }
                                 )
+
                             } else {
                                 DettaglioFilm(
                                     film = filmSelezionato,
@@ -171,7 +185,9 @@ class MainActivity : ComponentActivity() {
                                                 UseCasesProvider.useCasesWatchlist.invoke(film)
                                             }
                                         }
+
                                     },
+
                                     onPreferito = { nuovoValore ->
                                         scope.launch {
                                             filmSelezionato?.let { film ->
@@ -179,6 +195,7 @@ class MainActivity : ComponentActivity() {
                                             }
                                         }
                                     },
+
                                     onVisto = { nuovoValore ->
                                         scope.launch {
                                             filmSelezionato?.let { film ->
@@ -192,6 +209,10 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
+
         }
+
     }
+
 }
+

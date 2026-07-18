@@ -11,5 +11,6 @@ data class Film(
     var punteggio: Double? = 0.0,
     var percorsoLocandina: String? = null,
     var preferito: Boolean? = false,
-    val visto: Boolean = false
+    val visto: Boolean = false,
+    val watchlist : Boolean = false
 )
