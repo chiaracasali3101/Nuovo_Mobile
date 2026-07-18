@@ -30,10 +30,7 @@ fun LoginScreen(
     val coloreCrema = Color(0xFFFECE79)
     val coloreOro = Color(0xFFE6A341)
     val coloreRossoBottoni = Color(0xFF8C0902)
-
-    // Colore rosso scuro pieno, senza trasparenza, coordinato con il profilo
     val contenitoreInput = Color(0xFF5C0805)
-
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisibile by remember { mutableStateOf(false) }
@@ -46,7 +43,6 @@ fun LoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // --- LOGO BRAND (reView) ---
         Row(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
@@ -63,8 +59,6 @@ fun LoginScreen(
         )
 
         Spacer(modifier = Modifier.height(60.dp))
-
-        // --- CAMPO EMAIL ---
         Text(
             text = "EMAIL",
             color = coloreCrema,
@@ -93,7 +87,6 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // --- CAMPO PASSWORD ---
         Text(
             text = "PASSWORD",
             color = coloreCrema,
@@ -129,7 +122,6 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(40.dp))
 
-        // --- BOTTONE ACCEDI ---
         Button(
             onClick = { onLoginSuccess() },
             modifier = Modifier
@@ -143,7 +135,6 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(25.dp))
 
-        // --- LINK REGISTRAZIONE ---
         Row {
             Text("Nuovo su reView? ", color = coloreCrema.copy(alpha = 0.6f), fontSize = 14.sp)
             Text(
