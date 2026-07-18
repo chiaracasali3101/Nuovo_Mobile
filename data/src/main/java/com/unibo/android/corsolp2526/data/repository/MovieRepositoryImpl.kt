@@ -6,7 +6,7 @@ import com.unibo.android.domain.repositories.MovieRepository
 import kotlinx.coroutines.flow.StateFlow
 
 class MovieRepositoryImpl(
-    private val api: Any, // Sostituiremo 'Any' col tipo corretto della tua API se serve
+    private val api: Any,
     private val apiKey: String
 ) : MovieRepository {
 
