@@ -3,7 +3,7 @@ package com.unibo.android.domain.usecases
 import com.unibo.android.domain.models.Film
 import com.unibo.android.domain.repositories.MovieRepository
 
-// Interfaccia per il caso d'uso
+// interfaccia per il caso d'uso
 interface GetMovieListUseCase {
     suspend fun execute(): List<Film>
 }

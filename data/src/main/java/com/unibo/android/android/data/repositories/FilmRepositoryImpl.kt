@@ -38,12 +38,12 @@ class FilmRepositoryImpl(
                 FilmEntity(
                     id = dto.id,
                     titolo = dto.titolo,
-                    anno = dto.anno ?: "N/D", // <-- AGGANCIATO IL DATO VERO
+                    anno = dto.anno ?: "N/D",
                     trama = dto.trama ?: "Nessuna trama disponibile",
                     genere = "Cinema",
                     durata = "N/D",
                     regista = "N/D",
-                    punteggio = dto.punteggio ?: 0.0, // <-- AGGANCIATO IL DATO VERO
+                    punteggio = dto.punteggio ?: 0.0,
                     percorsoLocandina = dto.percorsoLocandina ?: "",
                     preferito = false,
                     visto = false
@@ -87,12 +87,12 @@ class FilmRepositoryImpl(
                 val entity = FilmEntity(
                     id = dto.id,
                     titolo = dto.titolo,
-                    anno = dto.anno ?: "N/D", // <-- AGGANCIATO IL DATO VERO
+                    anno = dto.anno ?: "N/D",
                     trama = dto.trama ?: "Nessuna trama disponibile",
                     genere = "Cinema",
                     durata = "N/D",
                     regista = "N/D",
-                    punteggio = dto.punteggio ?: 0.0, // <-- AGGANCIATO IL DATO VERO
+                    punteggio = dto.punteggio ?: 0.0,
                     percorsoLocandina = dto.percorsoLocandina ?: "",
                     preferito = false,
                     visto = false
@@ -115,12 +115,12 @@ class FilmRepositoryImpl(
                     FilmEntity(
                         id = dto.id,
                         titolo = dto.titolo,
-                        anno = dto.anno ?: "N/D", // <-- AGGANCIATO IL DATO VERO
+                        anno = dto.anno ?: "N/D",
                         trama = dto.trama ?: "Nessuna trama disponibile",
                         genere = "Cinema",
                         durata = "N/D",
                         regista = "N/D",
-                        punteggio = dto.punteggio ?: 0.0, // <-- AGGANCIATO IL DATO VERO
+                        punteggio = dto.punteggio ?: 0.0,
                         percorsoLocandina = dto.percorsoLocandina ?: "",
                         preferito = false,
                         visto = false

@@ -18,14 +18,14 @@ class MovieAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
-        // Inflate del layout standard per gli elementi della lista
+        // inflate del layout standard per gli elementi della lista
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.simple_list_item_1, parent, false)
         return MovieViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
-        // Associo i dati del film alla TextView
+        // associo i dati del film alla TextView
         val currentMovie = movieLines[position]
         holder.titleText.text = currentMovie.titolo
     }
@@ -34,7 +34,7 @@ class MovieAdapter(
         return movieLines.size
     }
 
-    // Metodo per aggiornare i dati della RecyclerView
+    // per aggiornare i dati della RecyclerView
     fun refreshData(newMovies: List<Film>) {
         movieLines.clear()
         movieLines.addAll(newMovies)

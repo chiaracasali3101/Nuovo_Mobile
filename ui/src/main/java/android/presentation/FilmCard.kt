@@ -77,7 +77,7 @@ fun FilmCard(film: Film, onClick: () -> Unit) {
     ) {
         Column {
             AsyncImage(
-                // Se il percorso è vuoto o non valido, carichiamo una stringa pulita
+                // se il percorso è vuoto o non valido, carichiamo una stringa pulita
                 model = if (film.percorsoLocandina.isNullOrBlank()) null else "https://image.tmdb.org/t/p/w500${film.percorsoLocandina}",
                 contentDescription = film.titolo,
                 placeholder = painterResource(id = android.R.drawable.ic_menu_gallery),

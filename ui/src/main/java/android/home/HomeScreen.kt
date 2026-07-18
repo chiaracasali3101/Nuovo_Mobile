@@ -96,7 +96,6 @@ fun HomeContent(listaCuriosita: List<Curiosita>, paddingEsterno: PaddingValues) 
             Text(text = "Curiosità sul cinema...", color = Color.White, fontSize = 57.sp, fontFamily = FontFamily.Serif, textAlign = TextAlign.Center, lineHeight = 62.sp, modifier = Modifier.fillMaxWidth().padding(vertical = 50.dp, horizontal = 16.dp))
         }
 
-        // Ho sostituito itemsIndexed con items normale, dato che l'alternanza non serve più
         items(listaCuriosita) { curiosita ->
             CuriositaItem(curiosita = curiosita)
         }
@@ -105,7 +104,6 @@ fun HomeContent(listaCuriosita: List<Curiosita>, paddingEsterno: PaddingValues) 
     }
 }
 
-// Nuova funzione per disporre gli elementi in verticale
 @Composable
 fun CuriositaItem(curiosita: Curiosita) {
     Column(
@@ -113,7 +111,6 @@ fun CuriositaItem(curiosita: Curiosita) {
             .fillMaxWidth()
             .padding(horizontal = 32.dp, vertical = 24.dp)
     ) {
-        // Titolo
         Text(
             text = curiosita.titolo,
             color = Color.White,
@@ -121,7 +118,6 @@ fun CuriositaItem(curiosita: Curiosita) {
             fontWeight = FontWeight.Bold,
             fontFamily = FontFamily.Serif
         )
-        // Testo (ora ha tutto lo spazio in larghezza)
         Text(
             text = curiosita.testo,
             color = Color(0xFFE0E0E0),
@@ -131,16 +127,14 @@ fun CuriositaItem(curiosita: Curiosita) {
             modifier = Modifier.padding(top = 12.dp)
         )
 
-        // Spazio per far respirare testo e immagine
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Immagine sotto al testo
         Image(
             painter = painterResource(id = curiosita.immagine),
             contentDescription = null,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(250.dp), // Altezza ridotta leggermente per bilanciare la visuale
+                .height(250.dp),
             contentScale = ContentScale.Fit
         )
     }
