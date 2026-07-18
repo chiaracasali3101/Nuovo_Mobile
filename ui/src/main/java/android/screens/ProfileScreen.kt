@@ -1,6 +1,11 @@
 package android.screens
 
 import android.components.ReViewBottomBar
+import android.graphics.Bitmap
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -28,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.unibo.android.ui.R
 import androidx.compose.ui.res.vectorResource
-
+import coil.compose.AsyncImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,6 +50,27 @@ fun ProfileScreen(navController: androidx.navigation.NavController) {
         Pair("WinterMarter", "8.5"), Pair("Sal:lisare", "8.5"), Pair("The Prestige", "8.8")
     )
     val listaWatchlist = listOf("Dune: Part Two", "Oppenheimer", "The Batman", "Blade Runner 2049", "Gladiator 2")
+    var profileImageUri by remember { mutableStateOf<Uri?>(null) }
+    var profileImageBitmap by remember { mutableStateOf<Bitmap?>(null) }
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri ->
+            if (uri != null) {
+                profileImageUri = uri
+                profileImageBitmap = null
+            }
+        }
+    )
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicturePreview(),
+        onResult = { bitmap ->
+            if (bitmap != null) {
+                profileImageBitmap = bitmap
+                profileImageUri = null
+            }
+        }
+    )
 
     Scaffold(
         bottomBar = { ReViewBottomBar(navController = navController) },
@@ -51,7 +78,6 @@ fun ProfileScreen(navController: androidx.navigation.NavController) {
     ) { innerPadding ->
 
         Box(modifier = Modifier.fillMaxSize().background(sfondoMarrone)) {
-
 
             Box(modifier = Modifier.fillMaxWidth().height(420.dp)) {
                 Image(
@@ -87,12 +113,36 @@ fun ProfileScreen(navController: androidx.navigation.NavController) {
                 Spacer(modifier = Modifier.height(30.dp))
                 Text(text = "IL TUO PROFILO", color = coloreCrema, fontSize = 13.sp, fontWeight = FontWeight.Bold, letterSpacing = 2.sp)
                 Spacer(modifier = Modifier.height(45.dp))
-
                 Box(
-                    modifier = Modifier.size(120.dp).clip(CircleShape).background(sfondoMarrone).border(3.dp, coloreOro, CircleShape),
+                    modifier = Modifier
+                        .size(120.dp)
+                        .clip(CircleShape)
+                        .background(sfondoMarrone)
+                        .border(3.dp, coloreOro, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(imageVector = Icons.Default.AccountCircle, contentDescription = null, modifier = Modifier.size(90.dp), tint = coloreCrema.copy(alpha = 0.8f))
+                    if (profileImageBitmap != null) {
+                        Image(
+                            bitmap = profileImageBitmap!!.asImageBitmap(),
+                            contentDescription = "Avatar Profilo",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else if (profileImageUri != null) {
+                        AsyncImage(
+                            model = profileImageUri,
+                            contentDescription = "Avatar Profilo",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.AccountCircle,
+                            contentDescription = null,
+                            modifier = Modifier.size(90.dp),
+                            tint = coloreCrema.copy(alpha = 0.8f)
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(15.dp))
@@ -109,9 +159,13 @@ fun ProfileScreen(navController: androidx.navigation.NavController) {
                     Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
                         Text(text = "Immagine del profilo", color = coloreCrema, fontSize = 15.sp, fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.height(10.dp))
-
                         Row(
-                            modifier = Modifier.fillMaxWidth().clickable { }.padding(vertical = 10.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    cameraLauncher.launch(null)
+                                }
+                                .padding(vertical = 10.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(painter = painterResource(id = R.drawable.ic_camera), contentDescription = null, tint = coloreRossoTesto, modifier = Modifier.size(22.dp))
@@ -122,7 +176,12 @@ fun ProfileScreen(navController: androidx.navigation.NavController) {
                         HorizontalDivider(color = coloreCrema.copy(alpha = 0.1f), thickness = 1.dp)
 
                         Row(
-                            modifier = Modifier.fillMaxWidth().clickable { }.padding(vertical = 10.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    galleryLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) // Lancia la galleria!
+                                }
+                                .padding(vertical = 10.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(painter = painterResource(id = R.drawable.ic_photolibrary), contentDescription = null, tint = coloreRossoTesto, modifier = Modifier.size(22.dp))
@@ -143,7 +202,7 @@ fun ProfileScreen(navController: androidx.navigation.NavController) {
 
                 Button(
                     onClick = {
-                        navController.navigate("mappa") // <--- Questa è la riga fondamentale!
+                        navController.navigate("mappa")
                     },
                     modifier = Modifier.fillMaxWidth(0.9f).height(50.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = coloreRossoBottoni),
