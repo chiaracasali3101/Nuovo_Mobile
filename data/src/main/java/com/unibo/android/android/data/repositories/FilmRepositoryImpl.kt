@@ -38,12 +38,12 @@ class FilmRepositoryImpl(
                 FilmEntity(
                     id = dto.id,
                     titolo = dto.titolo,
-                    anno = "N/D",
+                    anno = dto.anno ?: "N/D", // <-- AGGANCIATO IL DATO VERO
                     trama = dto.trama ?: "Nessuna trama disponibile",
                     genere = "Cinema",
                     durata = "N/D",
                     regista = "N/D",
-                    punteggio = 5.0,
+                    punteggio = dto.punteggio ?: 0.0, // <-- AGGANCIATO IL DATO VERO
                     percorsoLocandina = dto.percorsoLocandina ?: "",
                     preferito = false,
                     visto = false
@@ -63,7 +63,7 @@ class FilmRepositoryImpl(
     }
 
     override suspend fun getTopRatedMovies(): List<Film> {
-        return getPopularMovies()
+        return getPopularMovies() .sortedByDescending { it.punteggio }
     }
 
     override fun getTuttiIFilm(): Flow<List<Film>> {
@@ -87,12 +87,12 @@ class FilmRepositoryImpl(
                 val entity = FilmEntity(
                     id = dto.id,
                     titolo = dto.titolo,
-                    anno = "N/D",
+                    anno = dto.anno ?: "N/D", // <-- AGGANCIATO IL DATO VERO
                     trama = dto.trama ?: "Nessuna trama disponibile",
                     genere = "Cinema",
                     durata = "N/D",
                     regista = "N/D",
-                    punteggio = 5.0,
+                    punteggio = dto.punteggio ?: 0.0, // <-- AGGANCIATO IL DATO VERO
                     percorsoLocandina = dto.percorsoLocandina ?: "",
                     preferito = false,
                     visto = false
@@ -115,12 +115,12 @@ class FilmRepositoryImpl(
                     FilmEntity(
                         id = dto.id,
                         titolo = dto.titolo,
-                        anno = "N/D",
+                        anno = dto.anno ?: "N/D", // <-- AGGANCIATO IL DATO VERO
                         trama = dto.trama ?: "Nessuna trama disponibile",
                         genere = "Cinema",
                         durata = "N/D",
                         regista = "N/D",
-                        punteggio = 5.0,
+                        punteggio = dto.punteggio ?: 0.0, // <-- AGGANCIATO IL DATO VERO
                         percorsoLocandina = dto.percorsoLocandina ?: "",
                         preferito = false,
                         visto = false

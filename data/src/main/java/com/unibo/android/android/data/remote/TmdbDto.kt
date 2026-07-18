@@ -8,8 +8,9 @@ data class TmdbResponse(
 data class TmdbMovieDto(
     @SerializedName("id") val id: Int,
     @SerializedName("title") val titolo: String,
-    @SerializedName("release_date") val anno: String,
+    @SerializedName("release_date") val anno: String?,
     @SerializedName("overview") val trama: String,
+    @SerializedName("vote_average") val punteggio: Double?,
     val genere: String = "",
     val durata: String = "",
     val regista: String = "",
