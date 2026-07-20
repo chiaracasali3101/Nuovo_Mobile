@@ -31,6 +31,9 @@ fun LoginScreen(
     val coloreOro = Color(0xFFE6A341)
     val coloreRossoBottoni = Color(0xFF8C0902)
     val contenitoreInput = Color(0xFF5C0805)
+
+    // Variabile aggiunta per il Nome anche nel Login
+    var nome by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisibile by remember { mutableStateOf(false) }
@@ -58,7 +61,35 @@ fun LoginScreen(
             modifier = Modifier.padding(top = 8.dp)
         )
 
-        Spacer(modifier = Modifier.height(60.dp))
+        Spacer(modifier = Modifier.height(40.dp))
+
+        Text(
+            text = "NOME",
+            color = coloreCrema,
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.align(Alignment.Start).padding(start = 10.dp, bottom = 6.dp)
+        )
+        TextField(
+            value = nome,
+            onValueChange = { nome = it },
+            placeholder = { Text("Inserisci il tuo nome", color = coloreCrema.copy(alpha = 0.4f)) },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(10.dp),
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = contenitoreInput,
+                unfocusedContainerColor = contenitoreInput,
+                focusedTextColor = coloreCrema,
+                unfocusedTextColor = coloreCrema,
+                cursorColor = coloreOro,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
+            ),
+            singleLine = true
+        )
+
+        Spacer(modifier = Modifier.height(15.dp))
+
         Text(
             text = "EMAIL",
             color = coloreCrema,
@@ -85,7 +116,7 @@ fun LoginScreen(
             singleLine = true
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(15.dp))
 
         Text(
             text = "PASSWORD",
@@ -120,10 +151,24 @@ fun LoginScreen(
             singleLine = true
         )
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
         Button(
-            onClick = { onLoginSuccess() },
+            onClick = {
+                // Salviamo i dati nel SessionManager in modo che il profilo li legga correttamente
+                val nomeDaSalvare = if (nome.isNotBlank()) {
+                    nome
+                } else if (email.contains("@")) {
+                    email.substringBefore("@")
+                } else {
+                    "Utente"
+                }
+
+                android.screens.SessionManager.nomeUtenteAttuale = nomeDaSalvare
+                android.screens.SessionManager.emailUtenteAttuale = if (email.isNotBlank()) email else "utente@studio.unibo.it"
+
+                onLoginSuccess()
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(55.dp),

@@ -1,4 +1,4 @@
-package android.screens // Cambialo se il tuo Android Studio ti segnala la prima riga rossa
+package android.screens
 
 import android.components.ReViewBottomBar
 import android.graphics.Bitmap
@@ -50,6 +50,10 @@ fun ProfileScreen(
 
     val listaFilmVisti by viewModel.filmVisti.collectAsState(initial = emptyList())
     val listaWatchlist by viewModel.watchlist.collectAsState(initial = emptyList())
+
+    // MODIFICA 1: Ascoltiamo il nome e l'email reali dal ViewModel
+    val nomeUtente by viewModel.nomeUtente.collectAsState(initial = "Utente")
+    val emailUtente by viewModel.emailUtente.collectAsState(initial = "Caricamento...")
 
     var profileImageUri by remember { mutableStateOf<Uri?>(null) }
     var profileImageBitmap by remember { mutableStateOf<Bitmap?>(null) }
@@ -149,8 +153,9 @@ fun ProfileScreen(
                 }
 
                 Spacer(modifier = Modifier.height(15.dp))
-                Text(text = "Lola", color = coloreCrema, fontSize = 28.sp, fontWeight = FontWeight.Bold)
-                Text(text = "lola.scotti@studio.unibo.it", color = coloreCrema.copy(alpha = 0.6f), fontSize = 14.sp)
+                // MODIFICA 2: Usiamo le variabili al posto del testo fisso
+                Text(text = nomeUtente, color = coloreCrema, fontSize = 28.sp, fontWeight = FontWeight.Bold)
+                Text(text = emailUtente, color = coloreCrema.copy(alpha = 0.6f), fontSize = 14.sp)
 
                 Spacer(modifier = Modifier.height(25.dp))
 

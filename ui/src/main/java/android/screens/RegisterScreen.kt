@@ -28,6 +28,8 @@ fun RegisterScreen(
     val coloreRossoBottoni = Color(0xFF8C0902)
     val contenitoreInput = Color(0xFF5C0805)
 
+    // Variabile per il Nome
+    var nome by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confermaPassword by remember { mutableStateOf("") }
@@ -59,12 +61,25 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(40.dp))
 
-        // --- TITOLO DELLA PAGINA ---
         Text(text = "Crea un account", color = coloreCrema, fontSize = 22.sp, fontWeight = FontWeight.Bold)
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // --- CAMPO EMAIL ---
+        TextField(
+            value = nome,
+            onValueChange = { nome = it },
+            placeholder = { Text("Nome Completo", color = coloreCrema.copy(alpha = 0.4f)) },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(10.dp),
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = contenitoreInput, unfocusedContainerColor = contenitoreInput,
+                focusedTextColor = coloreCrema, unfocusedTextColor = coloreCrema,
+                focusedIndicatorColor = Color.Transparent, unfocusedIndicatorColor = Color.Transparent
+            ),
+            singleLine = true
+        )
+        Spacer(modifier = Modifier.height(15.dp))
+
         TextField(
             value = email,
             onValueChange = { email = it },
@@ -80,7 +95,6 @@ fun RegisterScreen(
         )
         Spacer(modifier = Modifier.height(15.dp))
 
-        // --- CAMPO PASSWORD ---
         TextField(
             value = password,
             onValueChange = { password = it },
@@ -97,7 +111,6 @@ fun RegisterScreen(
         )
         Spacer(modifier = Modifier.height(15.dp))
 
-        // --- CAMPO CONFERMA PASSWORD ---
         TextField(
             value = confermaPassword,
             onValueChange = { confermaPassword = it },
@@ -115,9 +128,15 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(40.dp))
 
-        // --- BOTTONE REGISTRATI ---
         Button(
-            onClick = { onRegisterSuccess() },
+            onClick = {
+                // Salviamo le variabili nel SessionManager
+                android.screens.SessionManager.nomeUtenteAttuale = if (nome.isNotBlank()) nome else "Nuovo Utente"
+                android.screens.SessionManager.emailUtenteAttuale = if (email.isNotBlank()) email else "utente@studio.unibo.it"
+
+                // Effettua la navigazione
+                onRegisterSuccess()
+            },
             modifier = Modifier.fillMaxWidth().height(55.dp),
             colors = ButtonDefaults.buttonColors(containerColor = coloreRossoBottoni),
             shape = RoundedCornerShape(10.dp)
@@ -126,8 +145,6 @@ fun RegisterScreen(
         }
 
         Spacer(modifier = Modifier.height(25.dp))
-
-        // --- LINK TORNA AL LOGIN ---
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text("Hai già un account? ", color = coloreCrema.copy(alpha = 0.6f), fontSize = 14.sp)
             Text(
