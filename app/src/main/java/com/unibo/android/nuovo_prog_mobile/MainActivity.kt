@@ -46,8 +46,10 @@ class MainActivity : ComponentActivity() {
                     val dettaglioViewModel: DettaglioViewModel = viewModel()
                     val navController = rememberNavController()
 
+                    // imposto la schermata di login come schermata di partenza
                     NavHost(navController = navController, startDestination = "login") {
 
+                        // rotta del login: se viene fatto l'accesso con successo si viene mandati alla home, mentre in caso contrario vengo mandata alla registrazione
                         composable("login") {
                             LoginScreen(
                                 onLoginSuccess = {
@@ -61,6 +63,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
+                        // rotta della registrazione
                         composable("registrazione") {
                             RegisterScreen(
                                 onRegisterSuccess = {
@@ -74,14 +77,17 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
+                        // rotta della schermata home principale
                         composable("home") {
                             HomeScreen(navController = navController)
                         }
 
+                        // rotta della mappa
                         composable("mappa") {
                             MapScreen(navController = navController)
                         }
 
+                        // rotta del profilo
                         composable("profilo") {
                             val repository = UseCasesProvider.getRepository()
                             val profileViewModel: android.screens.ProfileViewModel = viewModel(
@@ -95,6 +101,7 @@ class MainActivity : ComponentActivity() {
                             ProfileScreen(navController = navController, viewModel = profileViewModel)
                         }
 
+                        // rotta della classifica: gestendo la visualizzazione della lista o del dettaglio film
                         composable("classifica") {
                             val repository = UseCasesProvider.getRepository()
                             val classificaViewModel: ClassificaViewModel = viewModel(
@@ -121,6 +128,7 @@ class MainActivity : ComponentActivity() {
                             }
                         }
 
+                        // rotta di ricerca
                         composable("ricerca") {
                             val ricercaViewModel: RicercaViewModel = viewModel()
                             val query by ricercaViewModel.query.collectAsState()

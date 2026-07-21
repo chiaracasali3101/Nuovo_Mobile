@@ -26,6 +26,7 @@ fun LoginScreen(
     onLoginSuccess: () -> Unit = {},
     onNavigateToRegister: () -> Unit = {}
 ) {
+    // colori personalizzati dell'app
     val sfondoMarrone = Color(0xFF210100)
     val coloreCrema = Color(0xFFFECE79)
     val coloreOro = Color(0xFFE6A341)
@@ -63,6 +64,7 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(40.dp))
 
+        // campo per il nome del login
         Text(
             text = "NOME",
             color = coloreCrema,
@@ -90,6 +92,7 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(15.dp))
 
+        // campo per la mail nel login
         Text(
             text = "EMAIL",
             color = coloreCrema,
@@ -118,6 +121,7 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(15.dp))
 
+        // campo per la password nel login
         Text(
             text = "PASSWORD",
             color = coloreCrema,
@@ -155,7 +159,7 @@ fun LoginScreen(
 
         Button(
             onClick = {
-                // Salviamo i dati nel SessionManager in modo che il profilo li legga correttamente
+                // qui viene messo il nome, nel caso in cui non venga inserito, prendiamo il nome dalla mail
                 val nomeDaSalvare = if (nome.isNotBlank()) {
                     nome
                 } else if (email.contains("@")) {
@@ -180,6 +184,7 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(25.dp))
 
+        // Se non è registrato lo rimando alla pagina di registrazione
         Row {
             Text("Nuovo su reView? ", color = coloreCrema.copy(alpha = 0.6f), fontSize = 14.sp)
             Text(
