@@ -51,13 +51,14 @@ fun ProfileScreen(
     val listaFilmVisti by viewModel.filmVisti.collectAsState(initial = emptyList())
     val listaWatchlist by viewModel.watchlist.collectAsState(initial = emptyList())
 
-    // MODIFICA 1: Ascoltiamo il nome e l'email reali dal ViewModel
+    //Vengono lette le informazioni inserite dal viewmodel
     val nomeUtente by viewModel.nomeUtente.collectAsState(initial = "Utente")
     val emailUtente by viewModel.emailUtente.collectAsState(initial = "Caricamento...")
 
     var profileImageUri by remember { mutableStateOf<Uri?>(null) }
     var profileImageBitmap by remember { mutableStateOf<Bitmap?>(null) }
 
+    //Gestione galleria e fotocamera
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri ->
@@ -128,6 +129,7 @@ fun ProfileScreen(
                         .border(3.dp, coloreOro, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
+                    //Qui viene gestito il cerchio del profilo: la foto viene scattata subito o sennò viene presa dalla galleria
                     if (profileImageBitmap != null) {
                         Image(
                             bitmap = profileImageBitmap!!.asImageBitmap(),
@@ -159,6 +161,7 @@ fun ProfileScreen(
 
                 Spacer(modifier = Modifier.height(25.dp))
 
+                // creazione del riquadro con i pulsanti funzionanti
                 Card(
                     modifier = Modifier.fillMaxWidth(0.9f),
                     colors = CardDefaults.cardColors(containerColor = Color(0xFF3A0605).copy(alpha = 0.7f)),
@@ -199,6 +202,7 @@ fun ProfileScreen(
 
                 Spacer(modifier = Modifier.height(25.dp))
 
+                // calcolo sul totale dei film visti in modo da creare le statistiche
                 Row(modifier = Modifier.fillMaxWidth(0.9f), horizontalArrangement = Arrangement.spacedBy(15.dp)) {
                     StatisticCard(Modifier.weight(1f), "${listaFilmVisti.size}", "Film Visti", coloreRossoBottoni, coloreCrema)
                     StatisticCard(Modifier.weight(1f), "0", "Recensioni", coloreRossoBottoni, coloreCrema)
@@ -206,6 +210,7 @@ fun ProfileScreen(
 
                 Spacer(modifier = Modifier.height(25.dp))
 
+                // definisce il pulsante interattivo di cerca sale vicine
                 Button(
                     onClick = { navController.navigate("mappa") },
                     modifier = Modifier.fillMaxWidth(0.9f).height(50.dp),
@@ -219,6 +224,7 @@ fun ProfileScreen(
 
                 Spacer(modifier = Modifier.height(40.dp))
 
+                // vengono popolate le liste dei film recenti e della watchlist
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(15.dp)) {
                     Column(modifier = Modifier.weight(1f)) {
                         SectionTitle("FILM RECENTI")

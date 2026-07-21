@@ -22,13 +22,14 @@ fun RegisterScreen(
     onRegisterSuccess: () -> Unit = {},
     onNavigateToLogin: () -> Unit = {}
 ) {
+    // palette dei colori dell'app
     val sfondoMarrone = Color(0xFF210100)
     val coloreCrema = Color(0xFFFECE79)
     val coloreOro = Color(0xFFE6A341)
     val coloreRossoBottoni = Color(0xFF8C0902)
     val contenitoreInput = Color(0xFF5C0805)
 
-    // Variabile per il Nome
+    // variabili che salvano ciò che viene scritto dall'utente nei campi
     var nome by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -43,7 +44,6 @@ fun RegisterScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // --- LOGO BRAND (reView) ---
         Row(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
@@ -65,6 +65,7 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(20.dp))
 
+        // campo di testo per inserire il nome completo
         TextField(
             value = nome,
             onValueChange = { nome = it },
@@ -80,6 +81,7 @@ fun RegisterScreen(
         )
         Spacer(modifier = Modifier.height(15.dp))
 
+        // campo di testo per inserire l'email
         TextField(
             value = email,
             onValueChange = { email = it },
@@ -95,6 +97,7 @@ fun RegisterScreen(
         )
         Spacer(modifier = Modifier.height(15.dp))
 
+        // campo di testo per inserire la password
         TextField(
             value = password,
             onValueChange = { password = it },
@@ -111,6 +114,7 @@ fun RegisterScreen(
         )
         Spacer(modifier = Modifier.height(15.dp))
 
+        // campo di testo per la conferma della password
         TextField(
             value = confermaPassword,
             onValueChange = { confermaPassword = it },
@@ -154,7 +158,7 @@ fun RegisterScreen(
         }
     }
 }
-
+// funzione di anteprima
 @Preview(showBackground = true, widthDp = 400, heightDp = 800)
 @Composable
 fun RegisterPreview() {
