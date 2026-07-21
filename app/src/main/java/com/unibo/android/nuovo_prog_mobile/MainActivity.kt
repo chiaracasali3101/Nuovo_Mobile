@@ -1,6 +1,5 @@
 package com.unibo.android.nuovo_prog_mobile
 
-
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,19 +11,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import android.presentation.Ricerca
 import android.presentation.DettaglioFilm
 import android.presentation.DettaglioViewModel
+import android.presentation.RicercaViewModel
 import com.unibo.android.domain.di.UseCasesProvider
 import com.unibo.android.domain.models.Film
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import android.home.HomeScreen
 import android.leaderboard.ClassificaViewModel
 import android.leaderboard.ClassificaViewModelFactory
@@ -35,11 +30,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.unibo.android.ui.screens.LoginScreen
 import android.screens.RegisterScreen
-import com.unibo.android.android.data.repositories.FilmRepositoryImpl
-import com.unibo.android.domain.repositories.FilmRepository
 import com.unibo.android.ui.leaderboard.ClassificaScreen
 
-private const val TMDB_API_KEY = "f68e046df68555567f96d4cdfcc3ffdf"
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,12 +52,9 @@ class MainActivity : ComponentActivity() {
                             LoginScreen(
                                 onLoginSuccess = {
                                     navController.navigate("home") {
-                                        popUpTo("login") {
-                                            inclusive = true
-                                        }
+                                        popUpTo("login") { inclusive = true }
                                     }
                                 },
-
                                 onNavigateToRegister = {
                                     navController.navigate("registrazione")
                                 }
@@ -76,44 +65,33 @@ class MainActivity : ComponentActivity() {
                             RegisterScreen(
                                 onRegisterSuccess = {
                                     navController.navigate("home") {
-                                        popUpTo("login") {
-                                            inclusive = true
-
-                                        }
+                                        popUpTo("login") { inclusive = true }
                                     }
                                 },
-
                                 onNavigateToLogin = {
                                     navController.popBackStack()
-
                                 }
                             )
                         }
-
-
 
                         composable("home") {
                             HomeScreen(navController = navController)
                         }
+
                         composable("mappa") {
                             MapScreen(navController = navController)
                         }
-                        composable("profilo") {
-                            //recuperiamo il db
-                            val repository = UseCasesProvider.getRepository()
 
-                            // creiamo il tuo nuovo ProfileViewModel
+                        composable("profilo") {
+                            val repository = UseCasesProvider.getRepository()
                             val profileViewModel: android.screens.ProfileViewModel = viewModel(
                                 factory = object : androidx.lifecycle.ViewModelProvider.Factory {
                                     @Suppress("UNCHECKED_CAST")
                                     override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
-                                        // diciamo ad Android di leggerlo come FilmRepository
                                         return android.screens.ProfileViewModel(repository as com.unibo.android.domain.repositories.FilmRepository) as T
                                     }
                                 }
                             )
-
-                            // lo passiamo finalmente alla schermata
                             ProfileScreen(navController = navController, viewModel = profileViewModel)
                         }
 
@@ -124,112 +102,53 @@ class MainActivity : ComponentActivity() {
                             )
 
                             var filmSelezionato by remember { mutableStateOf<Film?>(null) }
-                            val scope = rememberCoroutineScope()
-                            if (filmSelezionato == null) {
+                            val currentFilm = filmSelezionato
+
+                            if (currentFilm == null) {
                                 ClassificaScreen(
                                     viewModel = classificaViewModel,
                                     onMovieClick = { film -> filmSelezionato = film }
                                 )
                             } else {
-
                                 DettaglioFilm(
-                                    film = filmSelezionato,
+                                    film = currentFilm,
                                     onBack = { filmSelezionato = null },
-                                    onInviaRecensione = { /* Logica per la recensione */ },
-                                    onAggiungiWatchlist = {
-                                        scope.launch {
-                                            filmSelezionato?.let { UseCasesProvider.useCasesWatchlist.invoke(it) }
-                                        }
-                                    },
-
-                                    onPreferito = { nuovoValore ->
-                                        scope.launch {
-                                            filmSelezionato?.let { UseCasesProvider.useCasesPreferito.invoke(it, nuovoValore) }
-                                        }
-                                    },
-
-                                    onVisto = { nuovoValore ->
-                                        scope.launch {
-                                            filmSelezionato?.let { UseCasesProvider.useCasesVisto.invoke(it, nuovoValore) }
-
-                                        }
-
-                                    }
-
+                                    onInviaRecensione = { /* Gestisci recensione se prevista */ },
+                                    onAggiungiWatchlist = { dettaglioViewModel.aggiungiAllaWatchlist(currentFilm) },
+                                    onPreferito = { nuovoValore -> dettaglioViewModel.preferito(currentFilm, nuovoValore) },
+                                    onVisto = { nuovoValore -> dettaglioViewModel.impostaVisto(currentFilm, nuovoValore) }
                                 )
-
                             }
-
                         }
 
                         composable("ricerca") {
-                            var query by remember { mutableStateOf("") }
-                            var listaFilm by remember { mutableStateOf(emptyList<Film>()) }
+                            val ricercaViewModel: RicercaViewModel = viewModel()
+                            val query by ricercaViewModel.query.collectAsState()
+                            val listaFilm by ricercaViewModel.listaFilm.collectAsState()
                             var filmSelezionato by remember { mutableStateOf<Film?>(null) }
-                            val scope = rememberCoroutineScope()
+                            val currentFilm = filmSelezionato
 
-                            LaunchedEffect(query) {
-                                if (query.isBlank()) {
-                                    listaFilm = emptyList()
-                                    return@LaunchedEffect
-                                }
-
-                                delay(500)
-                                listaFilm = withContext(Dispatchers.IO) {
-                                    UseCasesProvider.useCasesRicerca(
-                                        query,
-                                        tmdbApiKey = TMDB_API_KEY
-                                    )
-                                }
-                            }
-
-                            if (filmSelezionato == null) {
+                            if (currentFilm == null) {
                                 Ricerca(
                                     query = query,
                                     listaFilm = listaFilm,
-                                    onQueryChange = { nuovoTesto -> query = nuovoTesto },
+                                    onQueryChange = { nuovoTesto -> ricercaViewModel.aggiornaQuery(nuovoTesto) },
                                     onMovieClick = { film -> filmSelezionato = film }
                                 )
-
                             } else {
                                 DettaglioFilm(
-                                    film = filmSelezionato,
+                                    film = currentFilm,
                                     onBack = { filmSelezionato = null },
-                                    onInviaRecensione = { /* Logica per la recensione */ },
-                                    onAggiungiWatchlist = {
-                                        scope.launch {
-                                            filmSelezionato?.let { film ->
-                                                UseCasesProvider.useCasesWatchlist.invoke(film)
-                                            }
-                                        }
-
-                                    },
-
-                                    onPreferito = { nuovoValore ->
-                                        scope.launch {
-                                            filmSelezionato?.let { film ->
-                                                UseCasesProvider.useCasesPreferito.invoke(film, nuovoValore)
-                                            }
-                                        }
-                                    },
-
-                                    onVisto = { nuovoValore ->
-                                        scope.launch {
-                                            filmSelezionato?.let { film ->
-                                                UseCasesProvider.useCasesVisto.invoke(film, nuovoValore)
-                                            }
-                                        }
-                                    }
+                                    onInviaRecensione = { /* Gestisci recensione se prevista */ },
+                                    onAggiungiWatchlist = { dettaglioViewModel.aggiungiAllaWatchlist(currentFilm) },
+                                    onPreferito = { nuovoValore -> dettaglioViewModel.preferito(currentFilm, nuovoValore) },
+                                    onVisto = { nuovoValore -> dettaglioViewModel.impostaVisto(currentFilm, nuovoValore) }
                                 )
                             }
                         }
                     }
                 }
             }
-
         }
-
     }
-
 }
-
